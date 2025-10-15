@@ -1,0 +1,93 @@
+# Advanced connector examples showcasing all features
+
+# Example 1: OAuth2 with PII Protection
+sensitive_api:
+  base_url: https://api.example.com/v1
+  auth:
+    type: oauth2_client_credentials
+    token_url: https://auth.example.com/oauth/token
+    client_id: ${OAUTH_CLIENT_ID}
+    client_secret: ${OAUTH_CLIENT_SECRET}
+    scope: "read write"
+  allow_paths:
+    - "^/users/.*$"
+    - "^/customer/.*$"
+  rate_limit: {capacity: 100, refill_per_sec: 10}
+  cache_ttl_seconds: 30
+  pii_protection:
+    enabled: true
+    field_rules:
+      # Specific field protection rules
+      email: encrypt        # Encrypt email addresses
+      ssn: redact          # Redact SSNs
+      phone: tokenize      # Tokenize phone numbers
+      address: hash        # Hash addresses
+  budget:
+    monthly_usd_max: 500
+    on_exceed: block
+  cost_per_call_usd: 0.001
+
+# Example 2: Auto-scan PII with multiple providers
+payment_gateway:
+  providers:
+    - name: stripe
+      base_url: https://api.stripe.com/v1
+      auth: {type: bearer, token: ${STRIPE_KEY}}
+      weight: 1
+    - name: paypal
+      base_url: https://api.paypal.com/v2
+      auth:
+        type: oauth2_client_credentials
+        token_url: https://api.paypal.com/v1/oauth2/token
+        client_id: ${PAYPAL_CLIENT_ID}
+        client_secret: ${PAYPAL_CLIENT_SECRET}
+      weight: 2  # Prefer Stripe (lower weight = higher priority)
+  allow_paths:
+    - "^/charges$"
+    - "^/payments$"
+  pii_protection:
+    enabled: true
+    auto_scan: true   # Automatically detect and protect all PII patterns
+    action: encrypt   # redact | tokenize | encrypt | hash
+  rate_limit: {capacity: 50, refill_per_sec: 5}
+  budget:
+    monthly_usd_max: 1000
+    on_exceed: downgrade_provider
+
+# Example 3: Full observability setup
+analytics_api:
+  base_url: https://analytics.example.com/api
+  auth: {type: api_key_header, name: X-API-Key, value: ${ANALYTICS_KEY}}
+  allow_paths:
+    - "^/events$"
+    - "^/reports/.*$"
+  cache_ttl_seconds: 120
+  transforms:
+    response:
+      jmes: >
+        {
+          "total": count,
+          "events": events[*].{id: id, timestamp: ts, type: event_type},
+          "provider": meta.provider
+        }
+  # Metrics are automatically collected for Prometheus
+  # Access at /metrics endpoint
+
+# Example 4: Field-level encryption for GDPR compliance
+customer_data:
+  base_url: https://crm.example.com/api/v2
+  auth: {type: bearer, token: ${CRM_TOKEN}}
+  allow_paths:
+    - "^/customers/.*$"
+  pii_protection:
+    enabled: true
+    field_rules:
+      # Nested field support using dot notation
+      user.email: encrypt
+      user.phone: tokenize
+      user.address.street: redact
+      user.ssn: hash
+      billing.creditCard: redact
+  passthrough_headers: ["content-type", "x-request-id"]
+
+

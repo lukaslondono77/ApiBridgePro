@@ -1,0 +1,69 @@
+# Twilio API Connector
+# 
+# Setup:
+#   1. Get Account SID and Auth Token from https://console.twilio.com
+#   2. export TWILIO_ACCOUNT_SID=ACXXXX...
+#   3. export TWILIO_AUTH_TOKEN=your_auth_token
+#   4. Add this to your connectors.yaml
+# 
+# Usage:
+#   # Send SMS
+#   curl -X POST http://localhost:8000/proxy/twilio/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json \
+#     -d "From=+1234567890" \
+#     -d "To=+0987654321" \
+#     -d "Body=Hello from ApiBridge Pro!"
+# 
+# Rate Limits:
+#   Default: 1,000 req/sec per account
+#   Can be increased by request
+# 
+# Cost:
+#   SMS: $0.0075-$0.04 per message (varies by country)
+#   Voice: $0.0085-$0.14 per minute
+
+twilio:
+  base_url: https://api.twilio.com/2010-04-01
+  
+  # Basic auth with Account SID and Auth Token
+  auth:
+    type: basic
+    username: ${TWILIO_ACCOUNT_SID}
+    password: ${TWILIO_AUTH_TOKEN}
+  
+  allow_paths:
+    - "^/Accounts/.*/Messages\\.json$"
+    - "^/Accounts/.*/Calls\\.json$"
+    - "^/Accounts/.*/SMS/Messages\\.json$"
+    - "^/Accounts/.*/IncomingPhoneNumbers\\.json$"
+  
+  rate_limit:
+    capacity: 1000
+    refill_per_sec: 1000
+  
+  cache_ttl_seconds: 0  # Don't cache SMS/calls
+  
+  strategy:
+    timeout_ms: 30000  # 30 seconds (calls can take time)
+    retries: 2
+  
+  budget:
+    monthly_usd_max: 500  # Adjust based on usage
+    on_exceed: block
+  
+  # Average cost per message (estimate)
+  cost_per_call_usd: 0.0075
+  
+  # Protect phone numbers in logs
+  pii_protection:
+    enabled: true
+    field_rules:
+      From: tokenize
+      To: tokenize
+      body: redact  # May contain personal info
+  
+  passthrough_headers:
+    - "content-type"
+  
+  static_headers:
+    User-Agent: "ApiBridge-Pro/1.0"
+

@@ -1,0 +1,72 @@
+# SendGrid API Connector
+# 
+# Setup:
+#   1. Get API key from https://app.sendgrid.com/settings/api_keys
+#   2. export SENDGRID_API_KEY=SG.xxxx...
+#   3. Add this to your connectors.yaml
+# 
+# Usage:
+#   curl -X POST http://localhost:8000/proxy/sendgrid/mail/send \
+#     -H "Content-Type: application/json" \
+#     -d '{
+#       "personalizations":[{"to":[{"email":"test@example.com"}]}],
+#       "from":{"email":"from@example.com"},
+#       "subject":"Hello from ApiBridge Pro",
+#       "content":[{"type":"text/plain","value":"This is a test email"}]
+#     }'
+# 
+# Rate Limits:
+#   Free: 100 emails/day
+#   Essentials: 40,000 emails/month
+#   Pro: 100,000+ emails/month
+# 
+# Cost:
+#   Free: $0 (100/day)
+#   Essentials: $15/month (40K emails)
+#   Pro: $89.95/month (100K emails)
+
+sendgrid:
+  base_url: https://api.sendgrid.com/v3
+  
+  auth:
+    type: bearer
+    token: ${SENDGRID_API_KEY}
+  
+  allow_paths:
+    - "^/mail/send$"
+    - "^/mail/batch$"
+    - "^/marketing/contacts$"
+    - "^/templates$"
+    - "^/templates/.*$"
+  
+  rate_limit:
+    capacity: 100  # Conservative for free tier
+    refill_per_sec: 10
+  
+  cache_ttl_seconds: 0  # Don't cache email sends
+  
+  strategy:
+    timeout_ms: 15000  # 15 seconds
+    retries: 3  # Retry email sends
+  
+  budget:
+    monthly_usd_max: 100
+    on_exceed: block
+  
+  # Free tier cost = $0, but track usage
+  cost_per_call_usd: 0.0
+  
+  # Protect email addresses
+  pii_protection:
+    enabled: true
+    field_rules:
+      personalizations.to.email: encrypt
+      from.email: encrypt
+      content.value: redact  # May contain personal info
+  
+  passthrough_headers:
+    - "content-type"
+  
+  static_headers:
+    User-Agent: "ApiBridge-Pro/1.0"
+

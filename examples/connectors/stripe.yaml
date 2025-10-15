@@ -1,0 +1,81 @@
+# Stripe API Connector
+# 
+# Setup:
+#   1. Get API key from https://dashboard.stripe.com/apikeys
+#   2. export STRIPE_SECRET_KEY=sk_test_... (or sk_live_...)
+#   3. Add this to your connectors.yaml
+# 
+# Usage:
+#   # List customers
+#   curl http://localhost:8000/proxy/stripe/customers
+#   
+#   # Create charge
+#   curl -X POST http://localhost:8000/proxy/stripe/charges \
+#     -d amount=2000 \
+#     -d currency=usd \
+#     -d source=tok_visa
+# 
+# Rate Limits:
+#   100 req/sec per API key (Stripe's limit)
+#   Read operations: Higher limits
+#   Write operations: Stricter limits
+# 
+# Cost:
+#   API calls: FREE
+#   Transaction fees: 2.9% + $0.30 per charge
+
+stripe:
+  base_url: https://api.stripe.com/v1
+  
+  auth:
+    type: bearer
+    token: ${STRIPE_SECRET_KEY}
+  
+  allow_paths:
+    - "^/charges$"
+    - "^/charges/.*$"
+    - "^/customers$"
+    - "^/customers/.*$"
+    - "^/payment_intents$"
+    - "^/payment_intents/.*$"
+    - "^/refunds$"
+    - "^/refunds/.*$"
+    - "^/subscriptions$"
+    - "^/subscriptions/.*$"
+  
+  rate_limit:
+    capacity: 100  # Stripe limit
+    refill_per_sec: 100
+  
+  cache_ttl_seconds: 0  # Don't cache payment operations
+  
+  strategy:
+    timeout_ms: 10000  # 10 seconds
+    retries: 3  # Retry on network failures
+  
+  budget:
+    monthly_usd_max: 0  # Stripe API is free (no per-call cost)
+    on_exceed: block
+  
+  cost_per_call_usd: 0.0  # API calls are free
+  
+  # PII Protection (IMPORTANT for Stripe!)
+  pii_protection:
+    enabled: true
+    field_rules:
+      # Protect sensitive payment data
+      card.number: redact
+      card.cvc: redact
+      customer.email: encrypt
+      billing_details.email: encrypt
+      payment_method_details.card.last4: tokenize
+  
+  passthrough_headers:
+    - "content-type"
+    - "stripe-version"
+    - "request-id"
+    - "idempotency-key"
+  
+  static_headers:
+    Stripe-Version: "2023-10-16"  # Pin API version for stability
+

@@ -1,0 +1,57 @@
+# Unified weather across two providers (global-ready)
+weather_unified:
+  providers:
+    - name: openweather
+      base_url: https://api.openweathermap.org/data/2.5
+      auth: {type: api_key_query, name: appid, value: ${OPENWEATHER_KEY}}
+      weight: 1
+    - name: weatherapi
+      base_url: https://api.weatherapi.com/v1
+      auth: {type: api_key_query, name: key, value: ${WEATHERAPI_KEY}}
+      weight: 1
+  allow_paths:
+    - "^/weather$"
+    - "^/current.json$"
+  strategy: {policy: fastest_healthy_then_cheapest, timeout_ms: 2000, retries: 1}
+  cache_ttl_seconds: 60
+  response_model: WeatherUnified
+  transforms:
+    response:
+      # normalizes OWM and WeatherAPI into one object (temp_c, humidity, provider)
+      jmes: >
+        {
+          "temp_c": ( (main.temp || current.temp_c)*1.0 - (main.temp ? 273.15 : 0) ),
+          "humidity": current.humidity || main.humidity,
+          "provider": meta.provider
+        }
+  budget:
+    monthly_usd_max: 25
+    on_exceed: downgrade_provider
+  cost_per_call_usd: 0.0002
+  passthrough_headers: ["content-type", "etag"]
+  # PII protection example (optional)
+  pii_protection:
+    enabled: false
+    auto_scan: true  # Auto-detect and redact PII patterns
+    action: redact   # redact | tokenize | encrypt | hash
+
+# GitHub basic
+github:
+  base_url: https://api.github.com
+  auth: {type: bearer, token: ${GITHUB_TOKEN}}
+  allow_paths:
+    - "^/user$"
+    - "^/users/[^/]+$"
+    - "^/repos/[^/]+/[^/]+/issues$"
+  cache_ttl_seconds: 15
+  retries: 2
+
+# Slack basics
+slack:
+  base_url: https://slack.com/api
+  auth: {type: bearer, token: ${SLACK_BOT_TOKEN}}
+  allow_paths:
+    - "^/chat.postMessage$"
+    - "^/conversations.list$"
+  rate_limit: {capacity: 50, refill_per_sec: 30}
+

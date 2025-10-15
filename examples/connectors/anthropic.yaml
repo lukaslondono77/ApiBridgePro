@@ -1,0 +1,68 @@
+# Anthropic Claude API Connector
+# 
+# Setup:
+#   1. Get API key from https://console.anthropic.com/
+#   2. export ANTHROPIC_API_KEY=sk-ant-...
+#   3. Add this to your connectors.yaml
+# 
+# Usage:
+#   curl -X POST http://localhost:8000/proxy/anthropic/messages \
+#     -H "Content-Type: application/json" \
+#     -H "anthropic-version: 2023-06-01" \
+#     -d '{
+#       "model":"claude-3-sonnet-20240229",
+#       "max_tokens":1024,
+#       "messages":[{"role":"user","content":"Hello!"}]
+#     }'
+# 
+# Rate Limits:
+#   Tier 1: 50 req/min
+#   Tier 2: 1,000 req/min
+#   Tier 3: 2,000 req/min
+# 
+# Cost:
+#   Claude 3 Haiku: $0.25/MTok (input), $1.25/MTok (output)
+#   Claude 3 Sonnet: $3/MTok (input), $15/MTok (output)
+#   Claude 3 Opus: $15/MTok (input), $75/MTok (output)
+
+anthropic:
+  base_url: https://api.anthropic.com/v1
+  
+  auth:
+    type: header
+    header_name: x-api-key
+    token: ${ANTHROPIC_API_KEY}
+  
+  allow_paths:
+    - "^/messages$"
+    - "^/complete$"
+  
+  rate_limit:
+    capacity: 50  # Tier 1 limit
+    refill_per_sec: 0.83  # 50/60
+  
+  cache_ttl_seconds: 0  # Don't cache AI responses
+  
+  strategy:
+    timeout_ms: 60000  # 60 seconds for long completions
+    retries: 2
+  
+  budget:
+    monthly_usd_max: 100
+    on_exceed: block
+  
+  # Average cost (using Sonnet with ~500 tokens)
+  cost_per_call_usd: 0.01
+  
+  pii_protection:
+    enabled: false  # Enable if prompts contain PII
+    auto_scan: true
+    action: redact
+  
+  passthrough_headers:
+    - "content-type"
+    - "anthropic-version"
+  
+  static_headers:
+    anthropic-version: "2023-06-01"
+
