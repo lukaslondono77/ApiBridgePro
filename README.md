@@ -408,17 +408,23 @@ For more details, see:
 
 ## 💖 Sponsor This Project
 
-ApiBridge Pro is **100% open source** and maintained with love by **[Lukas Londono](https://github.com/lukaslondono77)**.
-
-If you find this project useful and want to support ongoing development:
-
 <div align="center">
 
-### **[💖 Sponsor Lukas Londono](https://github.com/lukaslondono77)**
+<a href="https://github.com/lukaslondono77">
+  <img src="https://github.com/lukaslondono77.png" width="100" style="border-radius: 50%;" alt="Lukas Londono"/>
+</a>
+
+### **[Lukas Londono](https://github.com/lukaslondono77)**
 
 [![Support the Project](https://img.shields.io/badge/Sponsor_Lukas_Londono-💖-pink?style=for-the-badge&logo=github)](https://github.com/lukaslondono77)
 
 </div>
+
+---
+
+ApiBridge Pro is **100% open source** and maintained with love by **[Lukas Londono](https://github.com/lukaslondono77)**.
+
+If you find this project useful and want to support ongoing development:
 
 **Why sponsor?**
 - ✨ Help maintain and improve ApiBridge Pro
