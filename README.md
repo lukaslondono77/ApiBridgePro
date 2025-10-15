@@ -408,13 +408,15 @@ For more details, see:
 
 ## 💖 Sponsor This Project
 
-ApiBridge Pro is **100% open source** and maintained with love by [@lukaslondono77](https://github.com/lukaslondono77).
+ApiBridge Pro is **100% open source** and maintained with love by **[Lukas Londono](https://github.com/lukaslondono77)**.
 
 If you find this project useful and want to support ongoing development:
 
 <div align="center">
 
-[![Support the Project](https://img.shields.io/badge/Support_the_Project-💖-pink?style=for-the-badge&logo=github)](https://github.com/lukaslondono77)
+### **[💖 Sponsor Lukas Londono](https://github.com/lukaslondono77)**
+
+[![Support the Project](https://img.shields.io/badge/Sponsor_Lukas_Londono-💖-pink?style=for-the-badge&logo=github)](https://github.com/lukaslondono77)
 
 </div>
 
