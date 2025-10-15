@@ -1,5 +1,12 @@
 # ApiBridge Pro
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-green.svg)](https://fastapi.tiangolo.com)
+[![Tests](https://img.shields.io/badge/tests-60%20passing-success)](https://github.com/lukaslondono77/ApiBridgePro/actions)
+[![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://github.com/astral-sh/ruff)
+[![Sponsor](https://img.shields.io/badge/Sponsor-💖-pink)](https://github.com/sponsors/lukaslondono77)
+
 **Enterprise-grade Universal API Gateway** with smart routing, PII protection, observability, and budget control.
 
 One endpoint, any provider — with multi-provider routing, schema unification, budgets, and advanced security.
@@ -394,7 +401,49 @@ spec:
 
 Contributions welcome! Please feel free to submit a Pull Request.
 
+For more details, see:
+- [CONTRIBUTING.md](CONTRIBUTING.md) - Contribution guidelines
+- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) - Community guidelines
+- [SECURITY.md](SECURITY.md) - Security policy
 
-### License
-This project is licensed under the terms of the MIT license.
+## 💖 Sponsor This Project
+
+ApiBridge Pro is **100% open source** and maintained with love by [@lukaslondono77](https://github.com/lukaslondono77).
+
+If you find this project useful and want to support ongoing development:
+
+<div align="center">
+
+[![Sponsor on GitHub](https://img.shields.io/badge/Sponsor_on_GitHub-💖-pink?style=for-the-badge&logo=github)](https://github.com/sponsors/lukaslondono77)
+
+</div>
+
+**Why sponsor?**
+- ✨ Help maintain and improve ApiBridge Pro
+- 🚀 Fund new features and integrations
+- 📚 Support documentation and tutorials
+- 🐛 Faster bug fixes and security updates
+- 🌍 Keep this project free and open source for everyone
+
+**What your sponsorship enables:**
+- More connector templates (OpenAI, Stripe, Twilio, and 100+ more)
+- Advanced features (GraphQL support, WebSocket proxying, gRPC)
+- Performance improvements and optimizations
+- Professional support and consulting
+- Community events and workshops
+
+**Other ways to support:**
+- ⭐ Star this repository
+- 🐦 Share on Twitter/LinkedIn
+- 📝 Write a blog post or tutorial
+- 🗣️ Speak about ApiBridge Pro at meetups
+- 🤝 Contribute code, docs, or connector templates
+
+Every contribution, big or small, makes a difference! 🙏
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+Copyright © 2025 [Lukas Londono](https://github.com/lukaslondono77)
 
