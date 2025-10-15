@@ -25,13 +25,11 @@ def client():
 
 
 @pytest.mark.asyncio
+@respx.mock
 async def test_weather_unified_with_mocked_upstream(test_app):
     """Test weather_unified connector with mocked providers"""
-    import respx as respx_module
-    
-    # Use respx router to mock all httpx clients globally
-    router = respx_module.Router(assert_all_called=False)
-    router.get("https://api.openweathermap.org/data/2.5/weather").mock(
+    # Mock OpenWeatherMap response
+    respx.get("https://api.openweathermap.org/data/2.5/weather").mock(
         return_value=Response(200, json={
             "main": {
                 "temp": 298.15,  # 25°C in Kelvin
@@ -40,7 +38,7 @@ async def test_weather_unified_with_mocked_upstream(test_app):
             "name": "Bogota"
         })
     )
-    router.get("https://api.weatherapi.com/v1/current.json").mock(
+    respx.get("https://api.weatherapi.com/v1/current.json").mock(
         return_value=Response(200, json={
             "current": {
                 "temp_c": 25.0,
@@ -52,30 +50,24 @@ async def test_weather_unified_with_mocked_upstream(test_app):
         })
     )
 
-    router.start()
-    try:
-        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-            response = await ac.get("/proxy/weather_unified/weather?q=Bogota")
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        response = await ac.get("/proxy/weather_unified/weather?q=Bogota")
 
-        assert response.status_code == 200
-        data = response.json()
+    assert response.status_code == 200
+    data = response.json()
 
-        # Should have unified schema (transform applied)
-        assert "temp_c" in data
-        assert "humidity" in data
-        assert "provider" in data
-        assert abs(data["temp_c"] - 25.0) < 1.0  # Close to 25°C
-    finally:
-        router.stop()
+    # Should have unified schema (transform applied)
+    assert "temp_c" in data
+    assert "humidity" in data
+    assert "provider" in data
+    assert abs(data["temp_c"] - 25.0) < 1.0  # Close to 25°C
 
 
 @pytest.mark.asyncio
+@respx.mock
 async def test_github_proxy_with_mock(test_app):
     """Test GitHub proxy with mocked response"""
-    import respx as respx_module
-    
-    router = respx_module.Router(assert_all_called=False)
-    router.get("https://api.github.com/user").mock(
+    respx.get("https://api.github.com/user").mock(
         return_value=Response(200, json={
             "login": "testuser",
             "id": 12345,
@@ -83,34 +75,28 @@ async def test_github_proxy_with_mock(test_app):
         })
     )
 
-    router.start()
-    try:
-        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-            response = await ac.get("/proxy/github/user")
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        response = await ac.get("/proxy/github/user")
 
-        assert response.status_code == 200
-        data = response.json()
-        assert data["login"] == "testuser"
-    finally:
-        router.stop()
+    assert response.status_code == 200
+    data = response.json()
+    assert data["login"] == "testuser"
 
 
 @pytest.mark.asyncio
+@respx.mock
 async def test_provider_failover(test_app):
     """Test that failover works when primary provider fails"""
-    import respx as respx_module
-    
-    router = respx_module.Router(assert_all_called=False)
     # First provider (openweather) returns 500
-    router.get("https://api.openweathermap.org/data/2.5/weather").mock(
+    respx.get("https://api.openweathermap.org/data/2.5/weather").mock(
         return_value=Response(500, json={"error": "Internal Server Error"})
     )
-    router.get("https://api.openweathermap.org/data/2.5/current.json").mock(
+    respx.get("https://api.openweathermap.org/data/2.5/current.json").mock(
         return_value=Response(500, json={"error": "Internal Server Error"})
     )
 
     # Second provider (weatherapi) succeeds
-    router.get("https://api.weatherapi.com/v1/current.json").mock(
+    respx.get("https://api.weatherapi.com/v1/current.json").mock(
         return_value=Response(200, json={
             "current": {
                 "temp_c": 25.0,
@@ -122,46 +108,36 @@ async def test_provider_failover(test_app):
         })
     )
 
-    router.start()
-    try:
-        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-            response = await ac.get("/proxy/weather_unified/current.json?q=Bogota")
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        response = await ac.get("/proxy/weather_unified/current.json?q=Bogota")
 
-        # Should succeed with fallback provider
-        assert response.status_code == 200
-        data = response.json()
-        assert "provider" in data
-        assert data["provider"] == "weatherapi"
-    finally:
-        router.stop()
+    # Should succeed with fallback provider
+    assert response.status_code == 200
+    data = response.json()
+    assert "provider" in data
+    assert data["provider"] == "weatherapi"
 
 
 @pytest.mark.asyncio
+@respx.mock
 async def test_all_providers_fail(test_app):
     """Test behavior when all providers fail"""
-    import respx as respx_module
-    
-    router = respx_module.Router(assert_all_called=False)
     # Both providers fail
-    router.get("https://api.openweathermap.org/data/2.5/weather").mock(
+    respx.get("https://api.openweathermap.org/data/2.5/weather").mock(
         return_value=Response(503, json={"error": "Service Unavailable"})
     )
-    router.get("https://api.weatherapi.com/v1/current.json").mock(
+    respx.get("https://api.weatherapi.com/v1/current.json").mock(
         return_value=Response(503, json={"error": "Service Unavailable"})
     )
 
-    router.start()
-    try:
-        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-            response = await ac.get("/proxy/weather_unified/weather?q=Bogota")
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        response = await ac.get("/proxy/weather_unified/weather?q=Bogota")
 
-        # Should return 502 Bad Gateway
-        assert response.status_code == 502
-        data = response.json()
-        assert "detail" in data
-        assert "error" in data["detail"].lower()
-    finally:
-        router.stop()
+    # Should return 502 Bad Gateway
+    assert response.status_code == 502
+    data = response.json()
+    assert "detail" in data
+    assert "error" in data["detail"].lower()
 
 
 @pytest.mark.asyncio
@@ -180,10 +156,9 @@ async def test_health_endpoint(test_app):
 
 
 @pytest.mark.asyncio
+@respx.mock
 async def test_caching_behavior(test_app):
     """Test that GET requests are cached"""
-    import respx as respx_module
-    
     # Mock response
     call_count = 0
 
@@ -192,52 +167,41 @@ async def test_caching_behavior(test_app):
         call_count += 1
         return Response(200, json={"value": call_count})
 
-    router = respx_module.Router(assert_all_called=False)
-    router.get("https://api.github.com/user").mock(side_effect=mock_handler)
+    respx.get("https://api.github.com/user").mock(side_effect=mock_handler)
 
-    router.start()
-    try:
-        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-            # First request
-            response1 = await ac.get("/proxy/github/user")
-            data1 = response1.json()
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        # First request
+        response1 = await ac.get("/proxy/github/user")
+        data1 = response1.json()
 
-            # Second request (should be cached)
-            response2 = await ac.get("/proxy/github/user")
-            data2 = response2.json()
+        # Second request (should be cached)
+        response2 = await ac.get("/proxy/github/user")
+        data2 = response2.json()
 
-        # Both should return the same data (cached)
-        assert data1 == data2
-        assert call_count == 1  # Only called once
-    finally:
-        router.stop()
+    # Both should return the same data (cached)
+    assert data1 == data2
+    assert call_count == 1  # Only called once
 
 
 @pytest.mark.asyncio
+@respx.mock
 async def test_rate_limiting(test_app):
     """Test that rate limiting is enforced"""
-    import respx as respx_module
-    
-    router = respx_module.Router(assert_all_called=False)
     # Mock a simple endpoint
-    router.get("https://api.github.com/user").mock(
+    respx.get("https://api.github.com/user").mock(
         return_value=Response(200, json={"login": "test"})
     )
 
-    router.start()
-    try:
-        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-            # Make requests up to rate limit
-            # GitHub connector has default capacity of 10
-            responses = []
-            for _i in range(15):
-                resp = await ac.get("/proxy/github/user")
-                responses.append(resp.status_code)
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        # Make requests up to rate limit
+        # GitHub connector has default capacity of 10
+        responses = []
+        for _i in range(15):
+            resp = await ac.get("/proxy/github/user")
+            responses.append(resp.status_code)
 
-            # Some requests should be rate limited (429)
-            assert 429 in responses
-    finally:
-        router.stop()
+        # Some requests should be rate limited (429)
+        assert 429 in responses
 
 
 @pytest.mark.asyncio
