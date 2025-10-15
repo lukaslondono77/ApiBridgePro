@@ -290,7 +290,6 @@ def _render_budgets(budgets: dict) -> str:
         spent = data.get('spent', 0)
         limit = data.get('limit', 100)
         percentage = min(100, (spent / limit * 100)) if limit > 0 else 0
-        tag_class = "tag-success" if percentage < 70 else ("tag-warning" if percentage < 90 else "tag-danger")
 
         html += f'''
         <div class="stat">
@@ -363,7 +362,7 @@ def _render_cache_stats(cache: dict) -> str:
     return html[:5000]  # Limit HTML size
 
 @router.get("", response_class=HTMLResponse)
-async def admin_dashboard(request: Request):
+async def admin_dashboard(_request: Request):
     """Render admin dashboard"""
     from .caching import _cache
     from .config import CONNECTORS_FILE, MODE, load_config
@@ -402,7 +401,7 @@ async def admin_dashboard(request: Request):
         }
 
     # Cache stats
-    for key, (exp, content, headers, status) in _cache.items():
+    for key, (exp, content, _headers, _status) in _cache.items():
         if len(stats['cache_stats']) < 50:  # Limit to 50 entries
             stats['cache_stats'][key] = {
                 'expires': exp,
@@ -422,7 +421,7 @@ async def cache_json():
     """Get cache statistics as JSON"""
     from .caching import _cache
     stats = {}
-    for key, (exp, content, headers, status) in _cache.items():
+    for key, (exp, content, _headers, status) in _cache.items():
         stats[key] = {
             'expires_at': exp,
             'size': len(content),

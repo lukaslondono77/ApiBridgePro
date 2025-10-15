@@ -1,10 +1,10 @@
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, ValidationError
 
 
 # Optional Pydantic validation for schema drift detection
-def validate_response(model: Optional[type[BaseModel]], data: Any) -> Optional[str]:
+def validate_response(model: type[BaseModel] | None, data: Any) -> str | None:
     if not model:
         return None
     try:

@@ -80,7 +80,7 @@ def test_mark_success_calculates_moving_average():
     pkey = "test:provider"
 
     mark_success(pkey, 100)
-    initial_avg = _health[pkey]["avg"]
+    _health[pkey]["avg"]
 
     mark_success(pkey, 200)
     new_avg = _health[pkey]["avg"]

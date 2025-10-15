@@ -1,5 +1,4 @@
 import time
-from typing import Optional
 
 # Try Redis (async) — if not available, fallback to in-memory
 try:
@@ -10,8 +9,8 @@ except Exception:
 _in_memory_budgets = {}
 
 class BudgetGuard:
-    def __init__(self, redis_url: Optional[str]):
-        self.redis: Optional[Redis] = None
+    def __init__(self, redis_url: str | None):
+        self.redis: Redis | None = None
         self.redis_url = redis_url
 
     async def init(self):
@@ -22,7 +21,7 @@ class BudgetGuard:
             except Exception:
                 self.redis = None
 
-    async def add_cost(self, key: str, usd: float, month_key: Optional[str] = None):
+    async def add_cost(self, key: str, usd: float, month_key: str | None = None):
         month_key = month_key or time.strftime("%Y-%m")
         full = f"budget:{key}:{month_key}"
         if self.redis:
@@ -30,7 +29,7 @@ class BudgetGuard:
         else:
             _in_memory_budgets[full] = float(_in_memory_budgets.get(full, 0.0) + usd)
 
-    async def get_cost(self, key: str, month_key: Optional[str] = None) -> float:
+    async def get_cost(self, key: str, month_key: str | None = None) -> float:
         month_key = month_key or time.strftime("%Y-%m")
         full = f"budget:{key}:{month_key}"
         if self.redis:

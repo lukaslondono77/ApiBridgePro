@@ -5,7 +5,6 @@ import asyncio
 import logging
 import time
 from dataclasses import dataclass
-from typing import Optional
 
 import httpx
 
@@ -16,7 +15,7 @@ class OAuth2Token:
     access_token: str
     expires_at: float  # Unix timestamp
     token_type: str = "Bearer"
-    scope: Optional[str] = None
+    scope: str | None = None
 
 class OAuth2Manager:
     def __init__(self):
@@ -33,8 +32,8 @@ class OAuth2Manager:
         token_url: str,
         client_id: str,
         client_secret: str,
-        scope: Optional[str] = None,
-        extra_params: Optional[dict] = None
+        scope: str | None = None,
+        extra_params: dict | None = None
     ) -> str:
         """
         Get valid access token, refreshing if necessary
@@ -72,8 +71,8 @@ class OAuth2Manager:
         token_url: str,
         client_id: str,
         client_secret: str,
-        scope: Optional[str] = None,
-        extra_params: Optional[dict] = None
+        scope: str | None = None,
+        extra_params: dict | None = None
     ) -> OAuth2Token:
         """Fetch new access token from provider"""
         data = {
@@ -110,7 +109,7 @@ class OAuth2Manager:
         self.tokens.pop(provider_key, None)
 
 # Global manager instance
-_oauth2_manager: Optional[OAuth2Manager] = None
+_oauth2_manager: OAuth2Manager | None = None
 
 def get_oauth2_manager() -> OAuth2Manager:
     global _oauth2_manager

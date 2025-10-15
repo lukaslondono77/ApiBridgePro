@@ -97,10 +97,7 @@ try:
 
         # Configure exporter (OTLP or Console)
         otlp_endpoint = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
-        if otlp_endpoint:
-            exporter = OTLPSpanExporter(endpoint=otlp_endpoint)
-        else:
-            exporter = ConsoleSpanExporter()
+        exporter = OTLPSpanExporter(endpoint=otlp_endpoint) if otlp_endpoint else ConsoleSpanExporter()
 
         provider.add_span_processor(BatchSpanProcessor(exporter))
         trace.set_tracer_provider(provider)

@@ -40,15 +40,15 @@ class ConnectorPolicy:
         normalized = unquote(path)  # Decode %2F, %2E%2E, etc.
         normalized = normalized.replace('//', '/')  # Remove double slashes
         normalized = normalized.rstrip('/')  # Remove trailing slash
-        
+
         # Prevent path traversal
         if '..' in normalized:
             return False
-        
+
         # Ensure starts with /
         if not normalized.startswith('/'):
             normalized = '/' + normalized
-        
+
         # Use fullmatch instead of match for exact matching
         return any(re.fullmatch(p, normalized) for p in self.allow_paths)
 

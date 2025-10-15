@@ -73,7 +73,7 @@ async def test_budget_incremental_adds():
     await guard.init()
 
     # Simulate 100 micro-transactions
-    for i in range(100):
+    for _i in range(100):
         await guard.add_cost("api", 0.001, "2025-01")
 
     total = await guard.get_cost("api", "2025-01")

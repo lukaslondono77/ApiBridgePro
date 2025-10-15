@@ -1,6 +1,5 @@
 import logging
 import time
-from typing import Optional
 
 import httpx
 import orjson
@@ -60,7 +59,7 @@ class Gateway:
         self.policies = policies
         # Create client with reasonable defaults, will override per-request
         self.client = httpx.AsyncClient(
-            http2=True, 
+            http2=True,
             timeout=httpx.Timeout(15.0, connect=5.0),
             limits=httpx.Limits(max_keepalive_connections=20, max_connections=100)
         )
@@ -123,10 +122,10 @@ class Gateway:
         # Per-connector timeout from strategy
         timeout_seconds = policy.strategy.get("timeout_ms", 15000) / 1000
         request_timeout = httpx.Timeout(timeout_seconds, connect=5.0)
-        
+
         # Retry configuration from strategy
         max_retries = policy.strategy.get("retries", 0)
-        
+
         # try providers in order
         errors: list[str] = []
         for prov in providers:
@@ -144,15 +143,15 @@ class Gateway:
                 t0 = time.time()
                 try:
                     resp = await self.client.request(
-                        method=method, 
-                        url=url, 
-                        headers=headers, 
+                        method=method,
+                        url=url,
+                        headers=headers,
                         params=qparams,
                         content=(body if body else None),
                         timeout=request_timeout  # Use per-connector timeout
                     )
                     latency_ms = int((time.time() - t0) * 1000)
-                    
+
                     # Record upstream metrics
                     MetricsCollector.record_upstream(connector, prov.get("name", "default"), resp.status_code, latency_ms / 1000)
 
@@ -220,7 +219,7 @@ class Gateway:
                         # Record final metrics
                         duration = time.time() - start_time
                         MetricsCollector.record_request(connector, method, resp.status_code, duration)
-                        
+
                         # Add observability headers
                         out_headers["X-ApiBridge-Provider"] = prov.get("name", "default")
                         out_headers["X-ApiBridge-Latency-Ms"] = str(latency_ms)
@@ -232,14 +231,14 @@ class Gateway:
                     if resp.status_code >= 500 and attempt < max_retries:
                         logger.warning(f"Provider {prov.get('name')} returned {resp.status_code}, retrying ({attempt+1}/{max_retries})")
                         continue  # Retry
-                    
+
                     # Final failure after retries - try next provider
                     mark_failure(prov["__key"])
                     MetricsCollector.update_provider_health(connector, prov.get("name", "default"), False)
                     errors.append(f"{prov.get('name')}: {resp.status_code}")
                     break  # Exit retry loop, try next provider
-                    
-                except httpx.TimeoutException as e:
+
+                except httpx.TimeoutException:
                     # Timeout - retry if configured
                     if attempt < max_retries:
                         logger.warning(f"Provider {prov.get('name')} timed out, retrying ({attempt+1}/{max_retries})")
@@ -248,7 +247,7 @@ class Gateway:
                     MetricsCollector.update_provider_health(connector, prov.get("name", "default"), False)
                     errors.append(f"{prov.get('name')}: timeout after {timeout_seconds}s")
                     break
-                    
+
                 except Exception as e:
                     # Other errors - retry if configured
                     if attempt < max_retries:

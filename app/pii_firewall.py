@@ -6,7 +6,7 @@ import hashlib
 import os
 import re
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 from cryptography.fernet import Fernet
 
@@ -18,7 +18,7 @@ class PIIAction(str, Enum):
     HASH = "hash"
 
 class PIIFirewall:
-    def __init__(self, encryption_key: Optional[str] = None):
+    def __init__(self, encryption_key: str | None = None):
         # Use provided key or generate one
         key_bytes = encryption_key.encode() if encryption_key else Fernet.generate_key()
         if len(key_bytes) != 44:  # Fernet key must be 44 bytes base64-encoded
@@ -98,7 +98,7 @@ class PIIFirewall:
             return text
 
         result = text
-        for pattern_name, pattern in self.patterns.items():
+        for _pattern_name, pattern in self.patterns.items():
             matches = pattern.finditer(result)
             for match in matches:
                 original = match.group(0)
@@ -155,7 +155,7 @@ class PIIFirewall:
 
 
 # Global instance (can be configured via environment)
-_firewall: Optional[PIIFirewall] = None
+_firewall: PIIFirewall | None = None
 
 def get_firewall() -> PIIFirewall:
     global _firewall

@@ -5,7 +5,7 @@ Integration test for proxy endpoint with mocked upstream
 import pytest
 import respx
 from fastapi.testclient import TestClient
-from httpx import AsyncClient, Response
+from httpx import ASGITransport, AsyncClient, Response
 
 from app.main import app, shutdown, startup
 
@@ -52,7 +52,7 @@ async def test_weather_unified_with_mocked_upstream(test_app):
         })
     )
 
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         response = await ac.get("/proxy/weather_unified/weather?q=Bogota")
 
     assert response.status_code == 200
@@ -77,7 +77,7 @@ async def test_github_proxy_with_mock(test_app):
         })
     )
 
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         response = await ac.get("/proxy/github/user")
 
     assert response.status_code == 200
@@ -107,7 +107,7 @@ async def test_provider_failover(test_app):
         })
     )
 
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         response = await ac.get("/proxy/weather_unified/current.json?q=Bogota")
 
     # Should succeed with fallback provider
@@ -128,7 +128,7 @@ async def test_all_providers_fail(test_app):
         return_value=Response(503, json={"error": "Service Unavailable"})
     )
 
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         response = await ac.get("/proxy/weather_unified/weather?q=Bogota")
 
     # Should return 502 Bad Gateway
@@ -141,7 +141,7 @@ async def test_all_providers_fail(test_app):
 @pytest.mark.asyncio
 async def test_health_endpoint(test_app):
     """Test health endpoint returns correct info"""
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         response = await ac.get("/health")
 
     assert response.status_code == 200
@@ -167,7 +167,7 @@ async def test_caching_behavior(test_app):
 
     respx.get("https://api.github.com/user").mock(side_effect=mock_handler)
 
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         # First request
         response1 = await ac.get("/proxy/github/user")
         data1 = response1.json()
@@ -190,11 +190,11 @@ async def test_rate_limiting(test_app):
         return_value=Response(200, json={"login": "test"})
     )
 
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         # Make requests up to rate limit
         # GitHub connector has default capacity of 10
         responses = []
-        for i in range(15):
+        for _i in range(15):
             resp = await ac.get("/proxy/github/user")
             responses.append(resp.status_code)
 
@@ -205,7 +205,7 @@ async def test_rate_limiting(test_app):
 @pytest.mark.asyncio
 async def test_unknown_connector_returns_404(test_app):
     """Test that unknown connector returns 404"""
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         response = await ac.get("/proxy/nonexistent/path")
 
     assert response.status_code == 404
@@ -217,7 +217,7 @@ async def test_unknown_connector_returns_404(test_app):
 @respx.mock
 async def test_disallowed_path_returns_403(test_app):
     """Test that disallowed paths return 403"""
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         # GitHub connector only allows specific paths
         response = await ac.get("/proxy/github/admin/secret")
 
