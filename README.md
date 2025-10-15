@@ -5,7 +5,7 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-green.svg)](https://fastapi.tiangolo.com)
 [![Tests](https://img.shields.io/badge/tests-60%20passing-success)](https://github.com/lukaslondono77/ApiBridgePro/actions)
 [![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://github.com/astral-sh/ruff)
-[![Sponsor](https://img.shields.io/badge/Sponsor-💖-pink)](https://github.com/sponsors/lukaslondono77)
+[![Sponsor](https://img.shields.io/badge/Sponsor-💖-pink)](https://github.com/lukaslondono77)
 
 **Enterprise-grade Universal API Gateway** with smart routing, PII protection, observability, and budget control.
 
@@ -414,7 +414,7 @@ If you find this project useful and want to support ongoing development:
 
 <div align="center">
 
-[![Sponsor on GitHub](https://img.shields.io/badge/Sponsor_on_GitHub-💖-pink?style=for-the-badge&logo=github)](https://github.com/sponsors/lukaslondono77)
+[![Support the Project](https://img.shields.io/badge/Support_the_Project-💖-pink?style=for-the-badge&logo=github)](https://github.com/lukaslondono77)
 
 </div>
 
