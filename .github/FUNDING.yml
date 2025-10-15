@@ -1,9 +1,114 @@
-# Sponsor ApiBridge Pro
-# These are supported funding model platforms
+# Hey! I'm @lukaslondono77 (Lukas Londono). 👋
 
-# github: lukaslondono77  # Uncomment when GitHub Sponsors is enabled
-# patreon: yourusername
-# open_collective: apibridge
-# ko_fi: yourusername
-custom: ["https://github.com/lukaslondono77"]
+I'm a software developer from Colombia. 🇨🇴
 
+I'm passionate about building **APIs, developer tools, and open source software**. 🚀
+
+## 🔨 What I'm Building
+
+I created **[ApiBridge Pro](https://github.com/lukaslondono77/ApiBridgePro)** - a universal API gateway with smart routing, PII protection, and budget control. It's changing how companies integrate external APIs at scale.
+
+I work on tools for **API integration, backend systems, and developer productivity**. 🌎
+
+I'm now focused on making **ApiBridge Pro** the go-to solution for API consumption globally. 🤓
+
+---
+
+## 🌐 Find Me Online
+
+- 🌐 **Website:** [lukaslondono77.github.io/personal](https://lukaslondono77.github.io/personal/)
+- 🐦 **Twitter/X:** [@lukasLondono2](https://twitter.com/lukasLondono2)
+- 💼 **LinkedIn:** [linkedin.com/in/lukas-londono-688829110](https://linkedin.com/in/lukas-londono-688829110/)
+- 💻 **GitHub:** [@lukaslondono77](https://github.com/lukaslondono77) (you are here)
+
+---
+
+## ⭐ Featured Projects
+
+### [ApiBridge Pro](https://github.com/lukaslondono77/ApiBridgePro) 🚀
+
+**Universal API Gateway** with smart routing, PII protection, observability, and budget control.
+
+**Key Features:**
+- 🔄 Multi-provider routing with automatic failover
+- 💰 Budget controls (save $100K-$5M/year)
+- 🔒 PII protection (GDPR compliant)
+- ⚡ 1,471 req/sec throughput
+- 📊 Prometheus metrics + OpenTelemetry tracing
+- 🎨 Beautiful admin dashboard
+
+**Tech Stack:** Python, FastAPI, httpx, Redis, Docker
+
+**Status:** Production-ready (A grade, 4.7/5) | 60 tests | 68% coverage
+
+---
+
+## 💡 Philosophy
+
+I believe in:
+- **Developer Experience First** - Tools should be intuitive and delightful
+- **Open Source by Default** - Share knowledge and build together
+- **Production Quality** - Every line of code matters
+- **Global Impact** - Solve problems that matter worldwide
+
+---
+
+## 🛠️ Tech Stack
+
+**Languages:** Python, TypeScript, JavaScript  
+**Frameworks:** FastAPI, React, Node.js  
+**Tools:** Docker, Kubernetes, Redis, PostgreSQL  
+**Clouds:** AWS, GCP, Azure  
+**Specialties:** APIs, DevOps, System Design, Performance
+
+---
+
+## 📫 Get in Touch
+
+Want to collaborate? Have questions? Just want to chat about APIs or tech?
+
+- 📧 **Email:** [Contact via GitHub](https://github.com/lukaslondono77)
+- 💬 **Twitter:** [@lukasLondono2](https://twitter.com/lukasLondono2)
+- 💼 **LinkedIn:** [Lukas Londono](https://linkedin.com/in/lukas-londono-688829110/)
+
+---
+
+## 💖 Support My Work
+
+If you find my projects helpful:
+
+- ⭐ **Star my repositories**
+- 🐦 **Share on social media**
+- 🤝 **Contribute** to my projects
+- 📝 **Write** about how you use them
+- 💌 **Sponsor** my open source work (coming soon!)
+
+Every bit of support helps me dedicate more time to building great tools for developers! 🙏
+
+---
+
+## 📊 GitHub Stats
+
+![Lukas's GitHub stats](https://github-readme-stats.vercel.app/api?username=lukaslondono77&show_icons=true&theme=tokyonight)
+
+---
+
+## 🚀 Current Focus
+
+Working on making **ApiBridge Pro** the world's best API gateway for:
+- Enterprise companies consuming 10+ APIs
+- SaaS platforms needing reliable integrations
+- Developers who want zero-code API configuration
+- Companies that need GDPR compliance and budget control
+
+**Join me on this journey!** ⭐ [Star ApiBridge Pro](https://github.com/lukaslondono77/ApiBridgePro)
+
+---
+
+<div align="center">
+
+**Building the future of API integration, one line of code at a time.** 💻✨
+
+*From Colombia 🇨🇴 • For the World 🌍*
+
+</div>
