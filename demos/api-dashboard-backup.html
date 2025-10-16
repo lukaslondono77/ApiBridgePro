@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 API Dashboard - ApiBridge Pro Demo</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f172a;
+            color: white;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        h1 { font-size: 3em; margin-bottom: 10px; }
+        .subtitle { opacity: 0.9; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .card {
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid #334155;
+        }
+        .card h2 { color: #667eea; margin-bottom: 20px; font-size: 1.5em; }
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 15px;
+        }
+        button:hover { background: #5568d3; transform: translateY(-2px); }
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            background: #0f172a;
+            border-radius: 10px;
+            min-height: 100px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .price { font-size: 48px; font-weight: bold; color: #10b981; margin: 20px 0; text-align: center; }
+        img { max-width: 100%; border-radius: 10px; margin-top: 15px; }
+        .fact { font-style: italic; color: #94a3b8; }
+        input {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: white;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎯 ApiBridge Pro</h1>
+        <div class="subtitle">Multi-API Dashboard Demo - All APIs Working Live!</div>
+    </div>
+    
+    <div class="grid">
+        <!-- Bitcoin Card -->
+        <div class="card">
+            <h2>💰 Bitcoin Price</h2>
+            <div class="result" id="bitcoin">Click button to load live price</div>
+            <button onclick="loadBitcoin()">🔄 Get Price</button>
+        </div>
+        
+        <!-- Ethereum Card -->
+        <div class="card">
+            <h2>💎 Ethereum Price</h2>
+            <div class="result" id="ethereum">Click button to load live price</div>
+            <button onclick="loadEthereum()">🔄 Get Price</button>
+        </div>
+        
+        <!-- Dog Card -->
+        <div class="card">
+            <h2>🐕 Random Dog</h2>
+            <div class="result" id="dog">Click button for a random dog!</div>
+            <button onclick="loadDog()">🎲 Get Dog</button>
+        </div>
+        
+        <!-- Weather Card -->
+        <div class="card">
+            <h2>🌤️ Live Weather</h2>
+            <div class="result" id="weather">Click for weather in San Francisco!</div>
+            <button onclick="loadWeather()">☀️ Get Weather</button>
+        </div>
+        
+        <!-- Hacker News Card -->
+        <div class="card">
+            <h2>📰 Tech News</h2>
+            <div class="result" id="news">Click for top tech story!</div>
+            <button onclick="loadNews()">📱 Get Story</button>
+        </div>
+        
+        <!-- Country Card -->
+        <div class="card">
+            <h2>🌍 Country Info</h2>
+            <input 
+                type="text" 
+                id="countryInput" 
+                placeholder="Country name..." 
+                style="width: 100%;">
+            <div class="result" id="country">Enter a country name above</div>
+            <button onclick="loadCountry()">🔍 Search</button>
+        </div>
+        
+        <!-- Blog Posts Card -->
+        <div class="card">
+            <h2>📝 Latest Blog Post</h2>
+            <div class="result" id="blog">Click button to load latest post</div>
+            <button onclick="loadBlog()">📰 Get Post</button>
+        </div>
+    </div>
+
+    <script>
+        async function loadBitcoin() {
+            document.getElementById('bitcoin').innerHTML = '<div style="text-align: center;">⏳ Loading...</div>';
+            try {
+                const res = await fetch('http://localhost:8000/proxy/coingecko/simple/price?ids=bitcoin&vs_currencies=usd');
+                const data = await res.json();
+                document.getElementById('bitcoin').innerHTML = `
+                    <div class="price">$${data.bitcoin.usd.toLocaleString()}</div>
+                    <div style="color: #94a3b8; text-align: center;">Live from CoinGecko</div>
+                `;
+            } catch (error) {
+                document.getElementById('bitcoin').innerHTML = '<div style="color: #ef4444;">❌ Error</div>';
+            }
+        }
+        
+        async function loadEthereum() {
+            document.getElementById('ethereum').innerHTML = '<div style="text-align: center;">⏳ Loading...</div>';
+            try {
+                const res = await fetch('http://localhost:8000/proxy/coingecko/simple/price?ids=ethereum&vs_currencies=usd');
+                const data = await res.json();
+                document.getElementById('ethereum').innerHTML = `
+                    <div class="price">$${data.ethereum.usd.toLocaleString()}</div>
+                    <div style="color: #94a3b8; text-align: center;">Live from CoinGecko</div>
+                `;
+            } catch (error) {
+                document.getElementById('ethereum').innerHTML = '<div style="color: #ef4444;">❌ Error</div>';
+            }
+        }
+        
+        async function loadDog() {
+            document.getElementById('dog').innerHTML = '<div style="text-align: center;">⏳ Fetching...</div>';
+            try {
+                const res = await fetch('http://localhost:8000/proxy/dog_api/breeds/image/random');
+                const data = await res.json();
+                document.getElementById('dog').innerHTML = 
+                    `<img src="${data.message}" alt="Random dog" style="width: 100%;">`;
+            } catch (error) {
+                document.getElementById('dog').innerHTML = '<div style="color: #ef4444;">❌ Error</div>';
+            }
+        }
+        
+        async function loadWeather() {
+            document.getElementById('weather').innerHTML = '<div style="text-align: center;">⏳ Loading...</div>';
+            try {
+                const res = await fetch('http://localhost:8000/proxy/openmeteo/forecast?latitude=37.7749&longitude=-122.4194&current=temperature_2m,weathercode&temperature_unit=fahrenheit');
+                const data = await res.json();
+                const temp = data.current?.temperature_2m || 'N/A';
+                const weatherCode = data.current?.weathercode || 0;
+                const weatherEmoji = weatherCode === 0 ? '☀️' : weatherCode < 3 ? '🌤️' : weatherCode < 50 ? '☁️' : '🌧️';
+                
+                document.getElementById('weather').innerHTML = 
+                    `<div style="font-size: 3rem; margin: 16px 0;">${weatherEmoji}</div>
+                     <div style="font-size: 2rem; font-weight: 600; margin-bottom: 8px;">${temp}°F</div>
+                     <div style="color: #64748b;">📍 San Francisco, CA</div>
+                     <div style="color: #64748b; font-size: 0.85rem; margin-top: 8px;">Live weather from Open-Meteo</div>`;
+            } catch (error) {
+                console.error('Weather error:', error);
+                document.getElementById('weather').innerHTML = '<div style="color: #ef4444;">❌ Error loading weather</div>';
+            }
+        }
+
+        async function loadNews() {
+            document.getElementById('news').innerHTML = '<div style="text-align: center;">⏳ Loading...</div>';
+            try {
+                const topRes = await fetch('http://localhost:8000/proxy/hackernews/topstories.json');
+                const topIds = await topRes.json();
+                
+                if (!topIds || topIds.length === 0) {
+                    document.getElementById('news').innerHTML = '<div style="color: #ef4444;">No stories available</div>';
+                    return;
+                }
+                
+                const randomId = topIds[Math.floor(Math.random() * Math.min(10, topIds.length))];
+                const storyRes = await fetch(`http://localhost:8000/proxy/hackernews/item/${randomId}.json`);
+                const story = await storyRes.json();
+                
+                if (!story || !story.title) {
+                    document.getElementById('news').innerHTML = '<div style="color: #ef4444;">Invalid story data</div>';
+                    return;
+                }
+                
+                const title = story.title;
+                const score = story.score || 0;
+                const url = story.url || `https://news.ycombinator.com/item?id=${randomId}`;
+                
+                document.getElementById('news').innerHTML = 
+                    `<div style="font-weight: 600; margin-bottom: 12px; line-height: 1.4;">${title}</div>
+                     <div style="color: #64748b; font-size: 0.9rem; margin-bottom: 8px;">⬆️ ${score} points</div>
+                     <a href="${url}" target="_blank" style="color: #3b82f6; text-decoration: none; font-size: 0.85rem;">🔗 Read more →</a>`;
+            } catch (error) {
+                console.error('News error:', error);
+                document.getElementById('news').innerHTML = '<div style="color: #ef4444;">❌ Error loading news</div>';
+            }
+        }
+        
+        async function loadCountry() {
+            const name = document.getElementById('countryInput').value;
+            if (!name) return;
+            
+            document.getElementById('country').innerHTML = '<div style="text-align: center;">⏳ Searching...</div>';
+            try {
+                const res = await fetch(`http://localhost:8000/proxy/restcountries/name/${name}`);
+                const data = await res.json();
+                const country = data[0];
+                const currency = Object.values(country.currencies || {})[0];
+                
+                document.getElementById('country').innerHTML = `
+                    <div style="font-size: 48px; text-align: center; margin: 10px 0;">${country.flag}</div>
+                    <div class="info"><strong style="color: #667eea; font-size: 20px;">${country.name.common}</strong></div>
+                    <div class="info">Capital: ${country.capital?.[0] || 'N/A'}</div>
+                    <div class="info">Population: ${country.population.toLocaleString()}</div>
+                    <div class="info">Region: ${country.region}</div>
+                    <div class="info">Currency: ${currency?.name || 'N/A'}</div>
+                `;
+            } catch (error) {
+                document.getElementById('country').innerHTML = '<div style="color: #ef4444; text-align: center;">❌ Country not found</div>';
+            }
+        }
+        
+        async function loadBlog() {
+            document.getElementById('blog').innerHTML = '<div style="text-align: center;">⏳ Loading...</div>';
+            try {
+                const res = await fetch('http://localhost:8000/proxy/jsonplaceholder/posts');
+                const posts = await res.json();
+                const post = posts[0];
+                
+                document.getElementById('blog').innerHTML = `
+                    <div class="info"><strong>${post.title}</strong></div>
+                    <div style="color: #666; margin-top: 10px; line-height: 1.6;">${post.body}</div>
+                    <div style="color: #667eea; margin-top: 10px; font-size: 12px;">Post #${post.id} by User ${post.userId}</div>
+                `;
+            } catch (error) {
+                document.getElementById('blog').innerHTML = '<div style="color: #ef4444;">❌ Error</div>';
+            }
+        }
+        
+        console.log('🎯 ApiBridge Pro Dashboard: http://127.0.0.1:8000/admin');
+        console.log('📊 Watch requests appear in real-time!');
+    </script>
+</body>
+</html>
+

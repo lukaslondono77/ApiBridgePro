@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ApiBridge Pro - Live Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: white;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: rgba(255,255,255,0.9);
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 2rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        
+        .card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #1f2937;
+        }
+        
+        .result {
+            min-height: 120px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #4b5563;
+            line-height: 1.6;
+        }
+        
+        button {
+            width: 100%;
+            padding: 14px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:active {
+            transform: scale(0.98);
+        }
+        
+        .country-card {
+            grid-column: span 2;
+        }
+        
+        .country-input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            margin-bottom: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .country-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .badge {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .country-card {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 ApiBridge Pro</h1>
+        <p class="subtitle">5 Real APIs Working Live - No Setup Required!</p>
+        
+        <div class="grid">
+            <!-- Bitcoin Price Card -->
+            <div class="card">
+                <h2>💰 Bitcoin Price <span class="badge">LIVE</span></h2>
+                <div class="result" id="bitcoin">Click button to load live price</div>
+                <button onclick="loadBitcoin()">🔄 Get Price</button>
+            </div>
+            
+            <!-- Ethereum Price Card -->
+            <div class="card">
+                <h2>💎 Ethereum Price <span class="badge">LIVE</span></h2>
+                <div class="result" id="ethereum">Click to load live price</div>
+                <button onclick="loadEthereum()">🔄 Get Price</button>
+            </div>
+            
+            <!-- Random Dog Card -->
+            <div class="card">
+                <h2>🐕 Random Dog <span class="badge">REAL</span></h2>
+                <div class="result" id="dog">Click for a cute dog!</div>
+                <button onclick="loadDog()">🎲 Get Dog</button>
+            </div>
+            
+            <!-- Cat Facts Card -->
+            <div class="card">
+                <h2>🐱 Cat Facts <span class="badge">FUN</span></h2>
+                <div class="result" id="catfact">Click for a cat fact!</div>
+                <button onclick="loadCatFact()">🐾 Get Fact</button>
+            </div>
+            
+            <!-- Country Search Card -->
+            <div class="card country-card">
+                <h2>🌍 Country Explorer <span class="badge">195 COUNTRIES</span></h2>
+                <input 
+                    type="text" 
+                    id="countryInput" 
+                    class="country-input"
+                    placeholder="Try: colombia, japan, france, brazil..."
+                    onkeypress="if(event.key === 'Enter') loadCountry()"
+                >
+                <div class="result" id="country">Enter a country name above and press Enter!</div>
+                <button onclick="loadCountry()">🔍 Search Country</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        async function loadBitcoin() {
+            document.getElementById('bitcoin').innerHTML = '<div style="text-align: center;">⏳ Loading...</div>';
+            try {
+                const res = await fetch('http://localhost:8000/proxy/coingecko/simple/price?ids=bitcoin&vs_currencies=usd');
+                const data = await res.json();
+                const price = data.bitcoin?.usd || 0;
+                const formattedPrice = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(price);
+                document.getElementById('bitcoin').innerHTML = 
+                    `<div>
+                        <div style="font-size: 2.5rem; font-weight: 700; color: #f7931a; margin-bottom: 8px;">${formattedPrice}</div>
+                        <div style="font-size: 0.9rem; color: #64748b;">Live from CoinGecko</div>
+                    </div>`;
+            } catch (error) {
+                document.getElementById('bitcoin').innerHTML = '<div style="color: #ef4444;">❌ Error loading price</div>';
+            }
+        }
+        
+        async function loadEthereum() {
+            document.getElementById('ethereum').innerHTML = '<div style="text-align: center;">⏳ Loading...</div>';
+            try {
+                const res = await fetch('http://localhost:8000/proxy/coingecko/simple/price?ids=ethereum&vs_currencies=usd');
+                const data = await res.json();
+                const price = data.ethereum?.usd || 0;
+                const formattedPrice = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(price);
+                document.getElementById('ethereum').innerHTML = 
+                    `<div>
+                        <div style="font-size: 2.5rem; font-weight: 700; color: #627eea; margin-bottom: 8px;">${formattedPrice}</div>
+                        <div style="font-size: 0.9rem; color: #64748b;">Live from CoinGecko</div>
+                    </div>`;
+            } catch (error) {
+                document.getElementById('ethereum').innerHTML = '<div style="color: #ef4444;">❌ Error loading price</div>';
+            }
+        }
+        
+        async function loadDog() {
+            document.getElementById('dog').innerHTML = '<div style="text-align: center;">⏳ Loading...</div>';
+            try {
+                const res = await fetch('http://localhost:8000/proxy/dog_api/breeds/image/random');
+                const data = await res.json();
+                const imageUrl = data.message;
+                if (imageUrl) {
+                    document.getElementById('dog').innerHTML = 
+                        `<img src="${imageUrl}" style="width: 100%; border-radius: 12px; max-height: 200px; object-fit: cover;" alt="Random dog">`;
+                } else {
+                    document.getElementById('dog').innerHTML = '<div style="color: #ef4444;">No image found</div>';
+                }
+            } catch (error) {
+                document.getElementById('dog').innerHTML = '<div style="color: #ef4444;">❌ Error</div>';
+            }
+        }
+        
+        async function loadCountry() {
+            const name = document.getElementById('countryInput').value.trim();
+            if (!name) return;
+            
+            document.getElementById('country').innerHTML = '<div style="text-align: center;">⏳ Searching...</div>';
+            try {
+                const res = await fetch(`http://localhost:8000/proxy/restcountries/name/${encodeURIComponent(name)}`);
+                const data = await res.json();
+                
+                if (data.detail) {
+                    document.getElementById('country').innerHTML = 
+                        `<div style="color: #ef4444;">❌ Country not found</div>`;
+                    return;
+                }
+                
+                const country = Array.isArray(data) ? data[0] : data;
+                const flag = country.flag || '';
+                const countryName = country.name?.common || country.name || 'Unknown';
+                const capital = country.capital?.[0] || 'N/A';
+                const population = new Intl.NumberFormat('en-US').format(country.population || 0);
+                const region = country.region || 'N/A';
+                const currency = Object.values(country.currencies || {})[0]?.name || 'N/A';
+                
+                document.getElementById('country').innerHTML = 
+                    `<div style="text-align: left;">
+                        <div style="font-size: 4rem; text-align: center; margin-bottom: 16px;">${flag}</div>
+                        <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 12px; color: #1f2937;">${countryName}</div>
+                        <div style="color: #64748b; line-height: 1.8;">
+                            <div><strong>Capital:</strong> ${capital}</div>
+                            <div><strong>Population:</strong> ${population}</div>
+                            <div><strong>Region:</strong> ${region}</div>
+                            <div><strong>Currency:</strong> ${currency}</div>
+                        </div>
+                    </div>`;
+            } catch (error) {
+                console.error('Country error:', error);
+                document.getElementById('country').innerHTML = '<div style="color: #ef4444;">❌ Error loading country</div>';
+            }
+        }
+        
+        async function loadCatFact() {
+            document.getElementById('catfact').innerHTML = '<div style="text-align: center;">⏳ Loading...</div>';
+            try {
+                const res = await fetch('http://localhost:8000/proxy/catfacts/fact');
+                const data = await res.json();
+                const fact = data.fact || 'No fact available';
+                const length = data.length || 0;
+                
+                document.getElementById('catfact').innerHTML = 
+                    `<div style="text-align: left;">
+                        <div style="font-size: 1.1rem; font-weight: 500; margin-bottom: 12px; line-height: 1.5; color: #1f2937;">"${fact}"</div>
+                        <div style="font-size: 0.85rem; color: #64748b;">🐱 ${length} characters</div>
+                    </div>`;
+            } catch (error) {
+                console.error('Cat fact error:', error);
+                document.getElementById('catfact').innerHTML = '<div style="color: #ef4444;">❌ Error loading cat fact</div>';
+            }
+        }
+        
+        async function loadAdvice() {
+            document.getElementById('advice').innerHTML = '<div style="text-align: center;">⏳ Loading...</div>';
+            try {
+                const res = await fetch('http://localhost:8000/proxy/adviceslip/advice');
+                const data = await res.json();
+                const adviceText = data.slip?.advice || 'No advice available';
+                const adviceId = data.slip?.id || '';
+                
+                document.getElementById('advice').innerHTML = 
+                    `<div style="text-align: left;">
+                        <div style="font-size: 1.2rem; font-weight: 600; margin-bottom: 12px; line-height: 1.5; color: #1f2937;">"${adviceText}"</div>
+                        <div style="font-size: 0.85rem; color: #64748b;">💡 Advice #${adviceId}</div>
+                    </div>`;
+            } catch (error) {
+                console.error('Advice error:', error);
+                document.getElementById('advice').innerHTML = '<div style="color: #ef4444;">❌ Error loading advice</div>';
+            }
+        }
+        
+        // Page loaded - ready for user interaction!
+        // Users click buttons to load data
+    </script>
+</body>
+</html>
+

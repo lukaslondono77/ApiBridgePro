@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head><title>CORS Test</title></head>
+<body>
+    <h1>CORS Test</h1>
+    <button onclick="test()">Test API</button>
+    <pre id="result"></pre>
+    
+    <script>
+        async function test() {
+            try {
+                console.log('Fetching from:', 'http://127.0.0.1:8000/proxy/coingecko/simple/price?ids=bitcoin&vs_currencies=usd');
+                const response = await fetch('http://127.0.0.1:8000/proxy/coingecko/simple/price?ids=bitcoin&vs_currencies=usd');
+                console.log('Response status:', response.status);
+                console.log('Response headers:', [...response.headers.entries()]);
+                const data = await response.json();
+                document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('result').textContent = 'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>
