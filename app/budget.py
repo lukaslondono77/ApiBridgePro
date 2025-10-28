@@ -6,7 +6,8 @@ RedisType: type[Any] | None = None
 try:
     from redis.asyncio import Redis  # redis>=5 supports asyncio
     RedisType = Redis  # type: ignore[assignment]
-except Exception:
+except Exception:  # nosec B110
+    # Redis is optional - fallback to in-memory storage
     pass
 
 _in_memory_budgets: dict[str, float] = {}
