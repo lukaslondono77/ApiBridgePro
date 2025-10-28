@@ -7,7 +7,7 @@ and unified schema transformations.
 
 Example:
     ```python
-    from apibridge import Gateway, ConnectorPolicy, BudgetGuard
+    from apibridgepro import Gateway, ConnectorPolicy, BudgetGuard
 
     # Create a gateway instance
     gateway = Gateway(policies, budget)

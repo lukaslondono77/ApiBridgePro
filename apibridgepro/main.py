@@ -181,7 +181,7 @@ Environment Variables:
         if "--no-reload" in args:
             reload = False
 
-    uvicorn.run("app.main:app", host=host, port=port, reload=reload)  # nosec B104
+    uvicorn.run("apibridgepro.main:app", host=host, port=port, reload=reload)  # nosec B104
 
 if __name__ == "__main__":
     cli()

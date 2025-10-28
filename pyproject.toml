@@ -51,18 +51,18 @@ dev = [
 ]
 
 [project.scripts]
-apibridge = "app.main:cli"
+apibridge = "apibridgepro.main:cli"
 
 [build-system]
 requires = ["setuptools>=68.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = ["app"]
+packages = ["apibridgepro"]
 package-dir = {"" = "."}
 
 [tool.setuptools.package-data]
-app = ["py.typed"]
+apibridgepro = ["py.typed"]
 
 [tool.uvicorn]
 reload = true

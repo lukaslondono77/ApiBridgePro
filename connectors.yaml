@@ -55,3 +55,121 @@ slack:
     - "^/conversations.list$"
   rate_limit: {capacity: 50, refill_per_sec: 30}
 
+# ═══════════════════════════════════════════════════════════════════
+# FREE APIS - NO KEYS NEEDED! Try these instantly!
+# ═══════════════════════════════════════════════════════════════════
+
+# JSONPlaceholder - Fake REST API for testing
+jsonplaceholder:
+  base_url: https://jsonplaceholder.typicode.com
+  allow_paths:
+    - "^/posts$"
+    - "^/posts/[0-9]+$"
+    - "^/users$"
+    - "^/users/[0-9]+$"
+    - "^/comments$"
+    - "^/todos$"
+  cache_ttl_seconds: 300
+  rate_limit:
+    capacity: 100
+    refill_per_sec: 10
+  budget:
+    monthly_usd_max: 0  # Free API
+    on_exceed: block
+  cost_per_call_usd: 0.0
+
+# REST Countries - Country information
+restcountries:
+  base_url: https://restcountries.com/v3.1
+  allow_paths:
+    - "^/name/.*$"
+    - "^/alpha/.*$"
+    - "^/all$"
+    - "^/region/.*$"
+  cache_ttl_seconds: 86400  # 24 hours (data rarely changes)
+  rate_limit:
+    capacity: 100
+    refill_per_sec: 10
+  budget:
+    monthly_usd_max: 0
+    on_exceed: block
+  cost_per_call_usd: 0.0
+
+# CoinGecko - Cryptocurrency prices
+coingecko:
+  base_url: https://api.coingecko.com/api/v3
+  allow_paths:
+    - "^/simple/price$"
+    - "^/coins/markets$"
+    - "^/coins/list$"
+    - "^/ping$"
+  cache_ttl_seconds: 60  # 1 minute (prices change)
+  rate_limit:
+    capacity: 50
+    refill_per_sec: 1
+  budget:
+    monthly_usd_max: 0
+    on_exceed: block
+  cost_per_call_usd: 0.0
+
+# Dog CEO - Random dog pictures
+dog_api:
+  base_url: https://dog.ceo/api
+  allow_paths:
+    - "^/breeds/image/random$"
+    - "^/breeds/list/all$"
+    - "^/breed/.*/images$"
+  cache_ttl_seconds: 300
+  rate_limit:
+    capacity: 100
+    refill_per_sec: 10
+  budget:
+    monthly_usd_max: 0
+    on_exceed: block
+  cost_per_call_usd: 0.0
+
+# Open-Meteo - Real weather data (NO API KEY NEEDED!)
+openmeteo:
+  base_url: https://api.open-meteo.com/v1
+  allow_paths:
+    - "^/forecast$"
+    - "^/forecast/.*$"
+  cache_ttl_seconds: 600  # 10 minutes
+  rate_limit:
+    capacity: 100
+    refill_per_sec: 10
+  budget:
+    monthly_usd_max: 0
+    on_exceed: block
+  cost_per_call_usd: 0.0
+
+# ipify - Get user's public IP address (NO API KEY NEEDED!)
+ipify:
+  base_url: https://api.ipify.org
+  allow_paths:
+    - "^/$"
+    - "^/\\?format=json$"
+  cache_ttl_seconds: 60  # 1 minute
+  rate_limit:
+    capacity: 100
+    refill_per_sec: 10
+  budget:
+    monthly_usd_max: 0
+    on_exceed: block
+  cost_per_call_usd: 0.0
+
+# Advice Slip - Random life advice (NO API KEY NEEDED!)
+adviceslip:
+  base_url: https://api.adviceslip.com
+  allow_paths:
+    - "^/advice$"
+    - "^/advice/.*$"
+  cache_ttl_seconds: 0  # Get fresh advice each time
+  rate_limit:
+    capacity: 100
+    refill_per_sec: 10
+  budget:
+    monthly_usd_max: 0
+    on_exceed: block
+  cost_per_call_usd: 0.0
+
