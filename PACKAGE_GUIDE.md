@@ -1,6 +1,6 @@
 # 📦 ApiBridge Pro - Python Package Guide
 
-This guide shows you how to install and use ApiBridge Pro as a Python package, just like any other library (e.g., `from apibridge import ...`).
+This guide shows you how to install and use ApiBridge Pro as a Python package, just like any other library (e.g., `from apibridgepro import ...`).
 
 ---
 
@@ -16,10 +16,10 @@ pip install -e .
 Now you can use it in Python:
 
 ```python
-from apibridge import Gateway, ConnectorPolicy, BudgetGuard, app
+from apibridgepro import Gateway, ConnectorPolicy, BudgetGuard, app
 
 # Use the FastAPI app
-from apibridge import app
+from apibridgepro import app
 
 # Or start the server via CLI
 apibridge  # Starts server on http://0.0.0.0:8000
@@ -48,7 +48,7 @@ pip install dist/apibridge_pro-0.1.0-py3-none-any.whl
 ### Import Components
 
 ```python
-from apibridge import (
+from apibridgepro import (
     Gateway,              # Main gateway class
     ConnectorPolicy,      # Connector configuration
     BudgetGuard,          # Budget management
@@ -61,14 +61,14 @@ from apibridge import (
 )
 
 # Access the FastAPI app
-from apibridge import app
+from apibridgepro import app
 ```
 
 ### Example: Custom Integration
 
 ```python
-from apibridge import Gateway, ConnectorPolicy, BudgetGuard, load_config
-from apibridge.config import CONNECTORS_FILE
+from apibridgepro import Gateway, ConnectorPolicy, BudgetGuard, load_config
+from apibridgepro.config import CONNECTORS_FILE
 import asyncio
 
 # Load your connectors
@@ -96,7 +96,7 @@ async def my_custom_function():
 ### Register Custom Models
 
 ```python
-from apibridge import register_model
+from apibridgepro import register_model
 from pydantic import BaseModel
 
 class MyCustomModel(BaseModel):
@@ -207,7 +207,7 @@ Then you can edit code and changes are reflected immediately!
 The package is configured in `pyproject.toml`:
 
 - **Package name**: `apibridge-pro`
-- **Import name**: `apibridge` (via `from apibridge import ...`)
+- **Import name**: `apibridgepro` (via `from apibridgepro import ...`)
 - **CLI command**: `apibridge`
 - **Version**: `0.1.0`
 
@@ -232,7 +232,7 @@ To release a new version:
 
 ```python
 from fastapi import FastAPI
-from apibridge import Gateway, BudgetGuard, build_connector_policies, load_config
+from apibridgepro import Gateway, BudgetGuard, build_connector_policies, load_config
 
 # Your FastAPI app
 my_app = FastAPI()
@@ -272,7 +272,7 @@ After installation, verify it works:
 
 ```python
 # Python
-python -c "from apibridge import Gateway; print('✅ Import works!')"
+python -c "from apibridgepro import Gateway; print('✅ Import works!')"
 
 # CLI
 apibridge --help
@@ -286,7 +286,7 @@ apibridge --help
 ✅ **From GitHub**: `pip install git+https://github.com/lukaslondono77/ApiBridgePro.git`  
 ✅ **From PyPI**: `pip install apibridge-pro` (after publishing)  
 ✅ **CLI Command**: `apibridge`  
-✅ **Python Import**: `from apibridge import Gateway, app, ...`  
+✅ **Python Import**: `from apibridgepro import Gateway, app, ...`  
 
 Your package is now ready to be used like any other Python library! 🎉
 

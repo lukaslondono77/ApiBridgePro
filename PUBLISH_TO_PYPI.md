@@ -80,7 +80,7 @@ pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://
 Test it works:
 ```bash
 # Verify installation
-python -c "from apibridge import Gateway; print('✅ Installed successfully!')"
+python -c "from apibridgepro import Gateway; print('✅ Installed successfully!')"
 
 # Test CLI
 apibridge --help
