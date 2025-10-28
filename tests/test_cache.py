@@ -3,8 +3,8 @@ Test caching functionality
 """
 import time
 
-from app.caching import get
-from app.caching import set as cache_set
+from apibridgepro.caching import get
+from apibridgepro.caching import set as cache_set
 
 
 def test_cache_set_and_get():

@@ -3,7 +3,7 @@ Test circuit breaker functionality
 """
 import time
 
-from app.health import CircuitBreaker, _health, mark_failure, mark_success, should_attempt_provider
+from apibridgepro.health import CircuitBreaker, _health, mark_failure, mark_success, should_attempt_provider
 
 
 def setup_function():

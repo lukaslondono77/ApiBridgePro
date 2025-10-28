@@ -4,7 +4,7 @@ Test budget tracking (in-memory and Redis fallback)
 
 import pytest
 
-from app.budget import BudgetGuard
+from apibridgepro.budget import BudgetGuard
 
 
 @pytest.mark.asyncio

@@ -1,7 +1,7 @@
 """
 Test security features - path validation, normalization
 """
-from app.connectors import ConnectorPolicy
+from apibridgepro.connectors import ConnectorPolicy
 
 
 def test_path_traversal_blocked():

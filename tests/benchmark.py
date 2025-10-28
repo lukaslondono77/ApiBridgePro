@@ -15,7 +15,7 @@ from httpx import ASGITransport
 # Add parent directory to path for app imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from app.main import app  # noqa: E402
+from apibridgepro.main import app  # noqa: E402
 
 
 class BenchmarkResults:

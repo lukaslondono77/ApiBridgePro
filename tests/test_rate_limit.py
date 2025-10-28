@@ -3,8 +3,8 @@ Test rate limiting functionality
 """
 import time
 
-from app.rate_limit import allow
-from app.util import TokenBucket
+from apibridgepro.rate_limit import allow
+from apibridgepro.util import TokenBucket
 
 
 def test_token_bucket_allows_requests():

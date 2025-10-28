@@ -3,7 +3,7 @@ Test schema drift detection
 """
 from pydantic import BaseModel
 
-from app.drift import validate_response
+from apibridgepro.drift import validate_response
 
 
 class UserModel(BaseModel):

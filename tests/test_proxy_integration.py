@@ -7,7 +7,7 @@ import respx
 from fastapi.testclient import TestClient
 from httpx import ASGITransport, AsyncClient, Response
 
-from app.main import app, shutdown, startup
+from apibridgepro.main import app, shutdown, startup
 
 
 @pytest.fixture

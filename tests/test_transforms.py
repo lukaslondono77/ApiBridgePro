@@ -1,7 +1,7 @@
 """
 Test JMESPath transformation functionality
 """
-from app.transforms import apply_transform_jmes
+from apibridgepro.transforms import apply_transform_jmes
 
 
 def test_simple_jmespath_transform():

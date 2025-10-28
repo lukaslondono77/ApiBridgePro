@@ -1,7 +1,7 @@
 """
 Test multi-provider routing and health tracking
 """
-from app.health import _health, mark_failure, mark_success, pick_best
+from apibridgepro.health import _health, mark_failure, mark_success, pick_best
 
 
 def setup_function():
