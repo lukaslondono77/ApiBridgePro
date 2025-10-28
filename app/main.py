@@ -20,6 +20,7 @@ from .connectors import build_connector_policies
 from .gateway import Gateway, register_model
 from .oauth2_manager import close_oauth2_manager
 from .observability import get_metrics, info_metric
+from .rate_limit import init_rate_limiter
 
 logger = logging.getLogger(__name__)
 
@@ -85,6 +86,8 @@ app.include_router(admin_router)
 @app.on_event("startup")
 async def startup():
     await budget.init()
+    # Initialize distributed rate limiting (if Redis available)
+    await init_rate_limiter(REDIS_URL)
     global gateway
     gateway = Gateway(POLICIES, budget)
     # Update metrics info

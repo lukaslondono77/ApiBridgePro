@@ -15,7 +15,7 @@ from .health import mark_failure, mark_success, pick_best
 from .oauth2_manager import get_oauth2_manager
 from .observability import MetricsCollector, trace_operation
 from .pii_firewall import PIIAction, get_firewall
-from .rate_limit import allow as rl_allow
+from .rate_limit import allow_async as rl_allow_async
 from .transforms import apply_transform_jmes
 
 logger = logging.getLogger(__name__)
@@ -78,8 +78,8 @@ class Gateway:
         if not policy.path_allowed(f"/{full_path}"):
             raise HTTPException(403, "Path not allowed by connector policy")
 
-        # rate limit
-        if not rl_allow(f"rl:{connector}", policy.rate.get("capacity",10), policy.rate.get("refill_per_sec",5)):
+        # rate limit (with Redis support for distributed limiting)
+        if not await rl_allow_async(f"rl:{connector}", policy.rate.get("capacity",10), policy.rate.get("refill_per_sec",5)):
             MetricsCollector.record_rate_limit(connector)
             raise HTTPException(429, "Rate limit exceeded")
 
