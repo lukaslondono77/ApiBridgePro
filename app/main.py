@@ -6,7 +6,7 @@ from fastapi.responses import ORJSONResponse
 from pydantic import BaseModel
 
 from .admin_ui import router as admin_router
-from .auth_middleware import authenticate_request
+from .auth_middleware import authenticate_request, limit_request_size
 from .budget import BudgetGuard
 from .config import (
     ALLOWED_ORIGINS,
@@ -63,6 +63,11 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"],
     allow_headers=["Content-Type", "Authorization", "X-API-Key"],
 )
+
+# Security middlewares
+# Request size limits - prevents DoS attacks (default: 10MB)
+# Set MAX_REQUEST_SIZE_MB=50 to increase limit
+app.middleware("http")(limit_request_size)
 
 # Authentication middleware - protects gateway endpoints
 # Set AUTH_ENABLED=true and VALID_API_KEYS=key1,key2,key3 to enable
