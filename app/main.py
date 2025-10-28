@@ -1,8 +1,6 @@
-
-import uvicorn
 from fastapi import FastAPI, Request
-from fastapi.responses import ORJSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import ORJSONResponse
 from pydantic import BaseModel
 
 from .admin_ui import router as admin_router
@@ -103,13 +101,14 @@ async def proxy(connector: str, full_path: str, request: Request):
 def cli():
     """CLI entry point for apibridge command"""
     import sys
+
     import uvicorn
-    
+
     # Parse basic args (can be extended)
     host = "0.0.0.0"
     port = 8000
     reload = True
-    
+
     if len(sys.argv) > 1:
         if "--help" in sys.argv or "-h" in sys.argv:
             print("""
@@ -127,7 +126,7 @@ Environment Variables:
     DISABLE_DOCS               Set to 'true' to disable /docs endpoint
             """)
             sys.exit(0)
-        
+
         # Simple arg parsing
         args = sys.argv[1:]
         if "--port" in args:
@@ -138,7 +137,7 @@ Environment Variables:
             host = args[idx + 1] if idx + 1 < len(args) else "0.0.0.0"
         if "--no-reload" in args:
             reload = False
-    
+
     uvicorn.run("app.main:app", host=host, port=port, reload=reload)  # nosec B104
 
 if __name__ == "__main__":
