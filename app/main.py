@@ -1,4 +1,5 @@
 import logging
+import os
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -18,9 +19,15 @@ from .config import (
 )
 from .connectors import build_connector_policies
 from .gateway import Gateway, register_model
+from .logging_config import setup_logging
 from .oauth2_manager import close_oauth2_manager
 from .observability import get_metrics, info_metric
 from .rate_limit import init_rate_limiter
+
+# Configure logging with sanitization (default: enabled)
+LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
+SANITIZE_LOGS = os.getenv("SANITIZE_LOGS", "true").lower() in ("true", "1", "yes")
+setup_logging(log_level=LOG_LEVEL, sanitize=SANITIZE_LOGS)
 
 logger = logging.getLogger(__name__)
 
