@@ -92,7 +92,11 @@ def should_attempt_provider(pkey: str) -> bool:
     if "circuit_breaker" not in h:
         h["circuit_breaker"] = CircuitBreaker()
 
-    return h["circuit_breaker"].should_attempt()
+    cb = h.get("circuit_breaker")
+    if cb and isinstance(cb, CircuitBreaker):
+        result = cb.should_attempt()
+        return bool(result)
+    return True
 
 def pick_best(providers: list[dict]) -> list[dict]:
     """

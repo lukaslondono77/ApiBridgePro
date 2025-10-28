@@ -104,10 +104,10 @@ try:
 
         tracer = trace.get_tracer(__name__)
     else:
-        tracer = None
+        tracer = None  # type: ignore[assignment]
 except ImportError:
     OTEL_ENABLED = False
-    tracer = None
+    tracer = None  # type: ignore[assignment]
 
 logger = logging.getLogger(__name__)
 

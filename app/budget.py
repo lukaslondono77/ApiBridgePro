@@ -1,22 +1,25 @@
 import time
+from typing import Any, Type
 
 # Try Redis (async) — if not available, fallback to in-memory
+RedisType: Type[Any] | None = None
 try:
     from redis.asyncio import Redis  # redis>=5 supports asyncio
+    RedisType = Redis  # type: ignore[assignment]
 except Exception:
-    Redis = None
+    pass
 
-_in_memory_budgets = {}
+_in_memory_budgets: dict[str, float] = {}
 
 class BudgetGuard:
     def __init__(self, redis_url: str | None):
-        self.redis: Redis | None = None
+        self.redis: Any = None
         self.redis_url = redis_url
 
     async def init(self):
-        if Redis and self.redis_url:
+        if RedisType and self.redis_url:
             try:
-                self.redis = Redis.from_url(self.redis_url, decode_responses=True)
+                self.redis = RedisType.from_url(self.redis_url, decode_responses=True)
                 await self.redis.ping()
             except Exception:
                 self.redis = None

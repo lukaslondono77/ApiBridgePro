@@ -387,23 +387,26 @@ async def admin_dashboard(_request: Request):
 
     # Budget stats (would need to fetch from budget guard)
     for name, policy in policies.items():
-        if policy.budget and policy.budget.get('monthly_usd_max'):
-            stats['budgets'][name] = {
-                'spent': 0,  # Would fetch from budget guard
-                'limit': float(policy.budget['monthly_usd_max'])
-            }
+        if policy.budget and isinstance(policy.budget, dict) and policy.budget.get('monthly_usd_max'):
+            if isinstance(stats['budgets'], dict):
+                stats['budgets'][name] = {
+                    'spent': 0,  # Would fetch from budget guard
+                    'limit': float(policy.budget['monthly_usd_max'])
+                }
 
     # Rate limit stats
     for name, bucket in _buckets.items():
-        stats['rate_limits'][name] = {
-            'tokens': bucket.tokens,
-            'capacity': bucket.capacity
-        }
+        if isinstance(stats['rate_limits'], dict):
+            stats['rate_limits'][name] = {
+                'tokens': bucket.tokens,
+                'capacity': bucket.capacity
+            }
 
     # Cache stats
     for key, (exp, content, _headers, _status) in _cache.items():
-        if len(stats['cache_stats']) < 50:  # Limit to 50 entries
-            stats['cache_stats'][key] = {
+        cache_stats = stats['cache_stats']
+        if isinstance(cache_stats, dict) and len(cache_stats) < 50:  # Limit to 50 entries
+            cache_stats[key] = {
                 'expires': exp,
                 'size': len(content)
             }

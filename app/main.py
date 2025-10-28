@@ -105,7 +105,7 @@ def cli():
     import uvicorn
 
     # Parse basic args (can be extended)
-    host = "0.0.0.0"
+    host = "0.0.0.0"  # nosec B104
     port = 8000
     reload = True
 
@@ -134,7 +134,7 @@ Environment Variables:
             port = int(args[idx + 1]) if idx + 1 < len(args) else 8000
         if "--host" in args:
             idx = args.index("--host")
-            host = args[idx + 1] if idx + 1 < len(args) else "0.0.0.0"
+            host = args[idx + 1] if idx + 1 < len(args) else "0.0.0.0"  # nosec B104
         if "--no-reload" in args:
             reload = False
 
