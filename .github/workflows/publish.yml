@@ -3,12 +3,9 @@ name: Publish to PyPI
 on:
   release:
     types: [published]
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'Version to publish (e.g., 0.1.0)'
-        required: true
-        type: string
+  # Note: workflow_dispatch disabled for security
+  # Real PyPI publishing only happens on GitHub releases
+  # Use TestPyPI workflow for manual testing
 
 jobs:
   publish:
