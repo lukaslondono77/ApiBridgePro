@@ -12,9 +12,7 @@ jobs:
   publish:
     name: Publish to TestPyPI
     runs-on: ubuntu-latest
-    environment:
-      name: testpypi
-      url: https://test.pypi.org/p/apibridge-pro
+    # TestPyPI doesn't support trusted publishing yet, so we need API token
     
     steps:
       - name: Checkout code
@@ -38,5 +36,5 @@ jobs:
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.TESTPYPI_API_TOKEN }}
-        run: twine upload --repository testpypi dist/*
+        run: twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 
