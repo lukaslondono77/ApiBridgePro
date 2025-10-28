@@ -6,6 +6,7 @@ from fastapi.responses import ORJSONResponse
 from pydantic import BaseModel
 
 from .admin_ui import router as admin_router
+from .auth_middleware import authenticate_request
 from .budget import BudgetGuard
 from .config import (
     ALLOWED_ORIGINS,
@@ -62,6 +63,10 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"],
     allow_headers=["Content-Type", "Authorization", "X-API-Key"],
 )
+
+# Authentication middleware - protects gateway endpoints
+# Set AUTH_ENABLED=true and VALID_API_KEYS=key1,key2,key3 to enable
+app.middleware("http")(authenticate_request)
 
 CONFIG = load_config(CONNECTORS_FILE)
 POLICIES = build_connector_policies(CONFIG)
