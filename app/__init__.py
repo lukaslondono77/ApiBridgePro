@@ -24,7 +24,6 @@ from apibridgepro.caching import set as cache_set
 from apibridgepro.config import CONNECTORS_FILE, load_config
 from apibridgepro.connectors import ConnectorPolicy, build_connector_policies
 from apibridgepro.gateway import Gateway, register_model
-from .main import app
 from apibridgepro.observability import (
     cache_hits,
     cache_misses,
@@ -35,6 +34,8 @@ from apibridgepro.observability import (
 )
 from apibridgepro.pii_firewall import PIIAction, PIIFirewall, get_firewall
 from apibridgepro.rate_limit import allow as rate_limit_allow
+
+from .main import app
 
 __all__ = [
     # Core classes
