@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import ORJSONResponse
@@ -5,11 +7,20 @@ from pydantic import BaseModel
 
 from .admin_ui import router as admin_router
 from .budget import BudgetGuard
-from .config import CONNECTORS_FILE, DISABLE_DOCS, MODE, REDIS_URL, load_config
+from .config import (
+    ALLOWED_ORIGINS,
+    CONNECTORS_FILE,
+    DISABLE_DOCS,
+    MODE,
+    REDIS_URL,
+    load_config,
+)
 from .connectors import build_connector_policies
 from .gateway import Gateway, register_model
 from .oauth2_manager import close_oauth2_manager
 from .observability import get_metrics, info_metric
+
+logger = logging.getLogger(__name__)
 
 
 # Example model you can validate against (optional, add more as needed)
@@ -31,13 +42,25 @@ app = FastAPI(
     openapi_url=None if DISABLE_DOCS else "/openapi.json",
 )
 
-# Enable CORS for demo apps and local development
+# CORS configuration - security critical
+# In production, set ALLOWED_ORIGINS environment variable:
+# export ALLOWED_ORIGINS=https://yourdomain.com,https://app.yourdomain.com
+# For development/local demos, ALLOWED_ORIGINS can be empty (allows all)
+
+# Determine allowed origins
+cors_origins = ALLOWED_ORIGINS if ALLOWED_ORIGINS else ["*"]
+if not ALLOWED_ORIGINS and MODE == "live":
+    logger.warning(
+        "⚠️  CORS: ALLOWED_ORIGINS not set - allowing all origins. "
+        "This is insecure for production! Set ALLOWED_ORIGINS environment variable."
+    )
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, specify exact origins
+    allow_origins=cors_origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"],
+    allow_headers=["Content-Type", "Authorization", "X-API-Key"],
 )
 
 CONFIG = load_config(CONNECTORS_FILE)

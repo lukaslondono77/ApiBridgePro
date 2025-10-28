@@ -27,4 +27,10 @@ MODE = os.getenv("APIBRIDGE_MODE", "live")  # live | record | replay
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 DISABLE_DOCS = os.getenv("DISABLE_DOCS", "false").lower() in ("1","true","yes")
 
+# CORS configuration - security critical
+ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "").split(",")
+ALLOWED_ORIGINS = [origin.strip() for origin in ALLOWED_ORIGINS if origin.strip()]
+# If empty, allow all for development (but warn in production)
+# In production, set ALLOWED_ORIGINS=https://yourdomain.com,https://app.yourdomain.com
+
 
