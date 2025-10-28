@@ -387,12 +387,12 @@ async def admin_dashboard(_request: Request):
 
     # Budget stats (would need to fetch from budget guard)
     for name, policy in policies.items():
-        if policy.budget and isinstance(policy.budget, dict) and policy.budget.get('monthly_usd_max'):
-            if isinstance(stats['budgets'], dict):
-                stats['budgets'][name] = {
-                    'spent': 0,  # Would fetch from budget guard
-                    'limit': float(policy.budget['monthly_usd_max'])
-                }
+        if (policy.budget and isinstance(policy.budget, dict) and policy.budget.get('monthly_usd_max')
+            and isinstance(stats['budgets'], dict)):
+            stats['budgets'][name] = {
+                'spent': 0,  # Would fetch from budget guard
+                'limit': float(policy.budget['monthly_usd_max'])
+            }
 
     # Rate limit stats
     for name, bucket in _buckets.items():

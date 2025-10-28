@@ -1,8 +1,8 @@
 import time
-from typing import Any, Type
+from typing import Any
 
 # Try Redis (async) — if not available, fallback to in-memory
-RedisType: Type[Any] | None = None
+RedisType: type[Any] | None = None
 try:
     from redis.asyncio import Redis  # redis>=5 supports asyncio
     RedisType = Redis  # type: ignore[assignment]
