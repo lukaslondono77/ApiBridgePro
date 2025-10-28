@@ -63,7 +63,7 @@ def sanitize_dict(data: dict[str, Any]) -> dict[str, Any]:
         if any(sensitive in key_lower for sensitive in sensitive_keywords):
             sanitized[key] = 'REDACTED'
         elif isinstance(value, dict):
-            sanitized[key] = sanitize_dict(value)
+            sanitized[key] = sanitize_dict(value)  # type: ignore[assignment]
         elif isinstance(value, str):
             # Sanitize string values
             sanitized[key] = sanitize_string(value)

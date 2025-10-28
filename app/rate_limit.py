@@ -87,7 +87,7 @@ async def allow_async(name: str, capacity: int, refill_per_sec: float) -> bool:
             await _redis_client.expire(key, 3600)
             return False
 
-        except Exception:
+        except Exception:  # nosec B110
             # Redis failed, fall through to in-memory
             pass
 

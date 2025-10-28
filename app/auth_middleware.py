@@ -54,14 +54,16 @@ async def authenticate_request(
     skip_auth_paths = ["/health", "/metrics", "/admin", "/docs", "/redoc", "/openapi.json"]
 
     if any(path.startswith(p) for p in skip_auth_paths):
-        return await call_next(request)
+        response = await call_next(request)
+        return response  # type: ignore[return-value]
 
     # Check if auth is enabled
     auth_enabled = os.getenv("AUTH_ENABLED", "false").lower() in ("true", "1", "yes")
 
     if not auth_enabled:
         # Auth disabled - allow all requests (development mode)
-        return await call_next(request)
+        response = await call_next(request)
+        return response  # type: ignore[return-value]
 
     # Validate API key
     api_key = request.headers.get("X-API-Key") or request.headers.get("Authorization", "").replace("Bearer ", "")
@@ -82,7 +84,8 @@ async def authenticate_request(
 
     # Valid API key - proceed
     logger.debug(f"Authenticated request to {path}")
-    return await call_next(request)
+    response = await call_next(request)
+    return response  # type: ignore[return-value]
 
 
 async def limit_request_size(
@@ -119,5 +122,6 @@ async def limit_request_size(
 
     # For methods with body, stream check (FastAPI/Starlette handles this)
     # We'll rely on Starlette's built-in size limits for actual body reading
-    return await call_next(request)
+    response = await call_next(request)
+    return response  # type: ignore[return-value]
 
