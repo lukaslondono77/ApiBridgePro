@@ -29,12 +29,70 @@ jobs:
           python -m pip install --upgrade pip
           pip install build twine
 
+      - name: Clean previous builds
+        run: |
+          rm -rf dist/ build/ *.egg-info/
+
+      - name: Update version
+        run: |
+          version="${{ inputs.version }}"
+          echo "📋 Current version in pyproject.toml:"
+          grep "^version = " pyproject.toml || echo "Version line not found!"
+          
+          if [ -z "$version" ]; then
+            echo "⚠️  No version specified, using version from pyproject.toml"
+          else
+            echo "📦 Updating version to $version in pyproject.toml"
+            # Use Python to reliably update version
+            python3 -c "
+          import re
+          import sys
+          
+          version = sys.argv[1]
+          with open('pyproject.toml', 'r') as f:
+              content = f.read()
+          
+          # Replace version line
+          new_content = re.sub(
+              r'^version = \".*\"',
+              f'version = \"{version}\"',
+              content,
+              flags=re.MULTILINE
+          )
+          
+          with open('pyproject.toml', 'w') as f:
+              f.write(new_content)
+          
+          print(f'✅ Version updated to {version}')
+          " "$version"
+            
+            echo "✅ Verifying update:"
+            grep "^version = " pyproject.toml
+          fi
+
       - name: Build package
         run: python -m build
+
+      - name: Verify built package version
+        run: |
+          echo "📦 Built packages:"
+          ls -lh dist/
+          echo ""
+          echo "🔍 Checking package metadata:"
+          python -m build --wheel 2>&1 | grep -i version || true
+          # Extract version from dist filename
+          echo "Package files:"
+          ls dist/*.whl 2>/dev/null | head -1 | sed 's/.*-\(.*\)-.*/\1/' || echo "Could not extract version"
 
       - name: Publish to TestPyPI
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.TESTPYPI_API_TOKEN }}
-        run: twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+        run: |
+          if [ -z "$TWINE_PASSWORD" ]; then
+            echo "❌ Error: TESTPYPI_API_TOKEN secret is not set"
+            echo "Please set it in: Settings → Secrets and variables → Actions"
+            exit 1
+          fi
+          twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 
