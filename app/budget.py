@@ -5,7 +5,7 @@ from typing import Any
 RedisType: type[Any] | None = None
 try:
     from redis.asyncio import Redis  # redis>=5 supports asyncio
-    RedisType = Redis  # type: ignore[assignment]
+    RedisType = Redis
 except Exception:  # nosec B110
     # Redis is optional - fallback to in-memory storage
     pass
