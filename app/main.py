@@ -2,6 +2,7 @@
 import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.responses import ORJSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from .admin_ui import router as admin_router
@@ -30,6 +31,15 @@ app = FastAPI(
     docs_url=None if DISABLE_DOCS else "/docs",
     redoc_url=None if DISABLE_DOCS else "/redoc",
     openapi_url=None if DISABLE_DOCS else "/openapi.json",
+)
+
+# Enable CORS for demo apps and local development
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In production, specify exact origins
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 CONFIG = load_config(CONNECTORS_FILE)
@@ -90,6 +100,47 @@ async def proxy(connector: str, full_path: str, request: Request):
 
     return resp
 
+def cli():
+    """CLI entry point for apibridge command"""
+    import sys
+    import uvicorn
+    
+    # Parse basic args (can be extended)
+    host = "0.0.0.0"
+    port = 8000
+    reload = True
+    
+    if len(sys.argv) > 1:
+        if "--help" in sys.argv or "-h" in sys.argv:
+            print("""
+ApiBridge Pro - Universal API Gateway
+
+Usage:
+    apibridge                  # Start server (default: 0.0.0.0:8000)
+    apibridge --port 9000     # Custom port
+    apibridge --no-reload     # Disable auto-reload
+
+Environment Variables:
+    CONNECTORS_FILE            Path to connectors.yaml (default: connectors.yaml)
+    REDIS_URL                  Redis connection URL (default: redis://localhost:6379)
+    MODE                       live | record | replay (default: live)
+    DISABLE_DOCS               Set to 'true' to disable /docs endpoint
+            """)
+            sys.exit(0)
+        
+        # Simple arg parsing
+        args = sys.argv[1:]
+        if "--port" in args:
+            idx = args.index("--port")
+            port = int(args[idx + 1]) if idx + 1 < len(args) else 8000
+        if "--host" in args:
+            idx = args.index("--host")
+            host = args[idx + 1] if idx + 1 < len(args) else "0.0.0.0"
+        if "--no-reload" in args:
+            reload = False
+    
+    uvicorn.run("app.main:app", host=host, port=port, reload=reload)  # nosec B104
+
 if __name__ == "__main__":
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)  # nosec B104 # Dev server binding
+    cli()
 

@@ -2,7 +2,25 @@
 name = "apibridge-pro"
 version = "0.1.0"
 description = "Global universal API connector with smart routing, transforms, budgets, and privacy."
+readme = "README.md"
 requires-python = ">=3.11"
+authors = [
+    {name = "Lukas Londono", email = "your-email@example.com"}
+]
+license = {text = "MIT"}
+keywords = ["api", "gateway", "proxy", "routing", "microservices", "fastapi"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
+    "Topic :: System :: Networking",
+]
 dependencies = [
   "fastapi",
   "uvicorn[standard]",
@@ -32,12 +50,16 @@ dev = [
   "types-redis"
 ]
 
+[project.scripts]
+apibridge = "app.main:cli"
+
 [build-system]
 requires = ["setuptools>=68.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 packages = ["app"]
+package-dir = {"" = "."}
 
 [tool.setuptools.package-data]
 app = ["py.typed"]
