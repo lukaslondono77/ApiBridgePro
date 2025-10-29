@@ -1,5 +1,6 @@
 import logging
 import os
+from typing import Any
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -81,17 +82,34 @@ app.middleware("http")(limit_request_size)
 # Set AUTH_ENABLED=true and VALID_API_KEYS=key1,key2,key3 to enable
 app.middleware("http")(authenticate_request)
 
-CONFIG = load_config(CONNECTORS_FILE)
-POLICIES = build_connector_policies(CONFIG)
-
-budget = BudgetGuard(REDIS_URL)
+# Lazy loading - only load config when needed
+CONFIG: dict[str, Any] | None = None
+POLICIES: dict[str, Any] | None = None
+budget: BudgetGuard | None = None
 gateway: Gateway | None = None
+
+def _ensure_config_loaded():
+    """Load config lazily if not already loaded"""
+    global CONFIG, POLICIES, budget
+    if CONFIG is None:
+        try:
+            CONFIG = load_config(CONNECTORS_FILE)
+            POLICIES = build_connector_policies(CONFIG)
+            budget = BudgetGuard(REDIS_URL)
+        except FileNotFoundError:
+            # If connectors.yaml not found, use empty config
+            CONFIG = {}
+            POLICIES = {}
+            budget = BudgetGuard(REDIS_URL)
+            logger.warning(f"connectors.yaml not found at {CONNECTORS_FILE}, using empty config")
 
 # Include admin UI router
 app.include_router(admin_router)
 
 @app.on_event("startup")
 async def startup():
+    _ensure_config_loaded()
+    assert budget is not None and POLICIES is not None
     await budget.init()
     # Initialize distributed rate limiting (if Redis available)
     await init_rate_limiter(REDIS_URL)
@@ -112,6 +130,8 @@ async def shutdown():
 
 @app.get("/health")
 def health():
+    _ensure_config_loaded()
+    assert POLICIES is not None
     return {"ok": True, "mode": MODE, "connectors": list(POLICIES.keys())}
 
 @app.get("/metrics")
@@ -126,6 +146,7 @@ def _rr_key(method: str, url: str, query: str) -> str:
 
 @app.api_route("/proxy/{connector}/{full_path:path}", methods=["GET","POST","PUT","PATCH","DELETE","OPTIONS","HEAD"])
 async def proxy(connector: str, full_path: str, request: Request):
+    _ensure_config_loaded()
     if MODE == "replay":
         key = _rr_key(request.method, f"{connector}/{full_path}", request.url.query)
         if key in _RECORDINGS:
