@@ -8,7 +8,6 @@ authors = [
     {name = "Lukas Londono", email = "your-email@example.com"}
 ]
 license = "MIT"
-license-files = ["LICENSE"]
 keywords = ["api", "gateway", "proxy", "routing", "microservices", "fastapi"]
 classifiers = [
     "Development Status :: 4 - Beta",
