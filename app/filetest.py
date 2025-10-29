@@ -1,4 +1,4 @@
-from apibridgepro import Gateway, BudgetGuard, ConnectorPolicy, app
+from apibridgepro import BudgetGuard, ConnectorPolicy, Gateway, app
 
 # Verify imports work
 assert Gateway is not None
