@@ -48,4 +48,13 @@ htmlcov/
 # Docker
 .dockerignore
 
+# Temporary test files (can be safely committed if desired)
+# test_install.py
+# example_simple.py
+
+# Publishing guides (can be committed, but contain instructions)
+# PUBLISH_STEPS.md
+# UPLOAD_NOW.md
+# PYPI_TOKEN_SETUP.md
+
 
