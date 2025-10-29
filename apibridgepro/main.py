@@ -45,7 +45,7 @@ register_model("WeatherUnified", WeatherUnified)
 app = FastAPI(
     title="ApiBridge Pro",
     description="Universal API Gateway with smart routing, PII protection, and observability",
-    version="0.1.1",
+    version="0.1.2",
     default_response_class=ORJSONResponse,
     docs_url=None if DISABLE_DOCS else "/docs",
     redoc_url=None if DISABLE_DOCS else "/redoc",
@@ -117,7 +117,7 @@ async def startup():
     gateway = Gateway(POLICIES, budget)
     # Update metrics info
     info_metric.info({
-        'version': '0.1.1',
+        'version': '0.1.2',
         'mode': MODE,
         'connectors': str(len(POLICIES))
     })

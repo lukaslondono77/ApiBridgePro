@@ -1,6 +1,6 @@
 [project]
 name = "apibridge-pro"
-version = "0.1.1"
+version = "0.1.2"
 description = "Global universal API connector with smart routing, transforms, budgets, and privacy."
 readme = "README.md"
 requires-python = ">=3.11"
